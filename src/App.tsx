@@ -41,4 +41,5 @@ class App extends PureComponent<Props, State> {
 
 export default App
 
+// @ts-ignore
 fastclick.attach(document.body)

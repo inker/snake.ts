@@ -11,6 +11,8 @@ import offsetByDirection from './utils/offsetByDirection'
 import GameLoop from './GameLoop'
 
 const START_X = 2
+const MAX_SVG_WIDTH = 700
+const MAX_SVG_HEIGHT = 400
 
 interface Props {
   width: number,
@@ -20,6 +22,10 @@ interface Props {
 }
 
 interface State {
+  svgDimensions: {
+    width: number,
+    height: number,
+  },
   snake: Point[],
   direction: Direction,
   food: Point | null,
@@ -37,7 +43,17 @@ class Game extends PureComponent<Props, State> {
       x,
       props.height >> 1,
     ))
+
+    const rX = MAX_SVG_WIDTH / props.width
+    const rY = MAX_SVG_HEIGHT / props.height
+    const min = Math.min(rX, rY)
+    const [newWidth, newHeight] = [props.width, props.height].map(i => i * min)
+
     this.setState({
+      svgDimensions: {
+        width: newWidth,
+        height: newHeight,
+      },
       snake,
       direction: Direction.RIGHT,
       food: null,
@@ -58,6 +74,10 @@ class Game extends PureComponent<Props, State> {
     if (this.gameLoop) {
       this.gameLoop.stop()
     }
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    // TODO
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -104,15 +124,22 @@ class Game extends PureComponent<Props, State> {
 
   render() {
     const {
+      width,
+      height,
+    } = this.props
+    const {
+      svgDimensions,
       snake,
       food,
     } = this.state
     return (
       <svg
-        width={500}
-        height={500}
+        xmlns="http://www.w3.org/2000/svg"
+        width={svgDimensions.width}
+        height={svgDimensions.height}
+        viewBox={`0 0 ${width} ${height}`}
       >
-        {snake && snake.map(p => (
+        {snake.map(p => (
           <Rect
             key={`${p.x},${p.y}`}
             color="red"
