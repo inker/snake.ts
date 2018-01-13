@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- stable
+
+before_deploy:
+- npm run build:prod
+
+deploy:
+- provider: pages
+  local_dir: docs
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  fqdn: https://snake.inker.fun
+  on:
+    branch: master
