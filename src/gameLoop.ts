@@ -1,12 +1,35 @@
-export default (interval: number, cb: () => void) => {
-  let lastTimeStamp = -1
-  const step = (timestamp: number) => {
-    const diff = timestamp - lastTimeStamp
-    if (diff >= interval) {
-      lastTimeStamp -= interval
-      cb()
-    }
-    window.requestAnimationFrame(step)
+export default class GameLoop {
+  interval: number
+  lastTimeStamp = -1
+  running = false
+  callback: () => void
+
+  constructor(interval: number, callback: () => void) {
+    this.interval = interval
+    this.callback = callback
   }
-  window.requestAnimationFrame(step)
+
+  start() {
+    this.running = true
+    window.requestAnimationFrame(this.step)
+    return this
+  }
+
+  stop() {
+    this.running = false
+    return this
+  }
+
+  private step = (timestamp: number) => {
+    if (!this.running) {
+      return
+    }
+    const diff = timestamp - this.lastTimeStamp
+    if (diff >= this.interval) {
+      this.lastTimeStamp -= this.interval
+      this.callback()
+    }
+    window.requestAnimationFrame(this.step)
+  }
+
 }

@@ -8,7 +8,7 @@ import Direction from 'utils/Direction'
 import directionByKeyCode from './utils/directionByKeyCode'
 import offsetByDirection from './utils/offsetByDirection'
 
-import gameLoop from './gameLoop'
+import GameLoop from './GameLoop'
 
 const START_X = 2
 
@@ -27,6 +27,8 @@ interface State {
 }
 
 class Game extends PureComponent<Props, State> {
+  gameLoop: GameLoop | null = null
+
   constructor(props) {
     super(props)
 
@@ -48,15 +50,24 @@ class Game extends PureComponent<Props, State> {
 
     this.runGameLoop(interval)
 
-    window.addEventListener('keydown', e => {
-      this.setState({
-        direction: directionByKeyCode(e.keyCode),
-      })
+    window.addEventListener('keydown', this.onKeyDown)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown)
+    if (this.gameLoop) {
+      this.gameLoop.stop()
+    }
+  }
+
+  private onKeyDown = (e: KeyboardEvent) => {
+    this.setState({
+      direction: directionByKeyCode(e.keyCode),
     })
   }
 
   private runGameLoop(interval: number) {
-    gameLoop(interval, () => {
+    this.gameLoop = new GameLoop(interval, () => {
       const {
         snake,
         direction,
@@ -79,7 +90,7 @@ class Game extends PureComponent<Props, State> {
           food: this.makeFood(),
         })
       })
-    })
+    }).start()
   }
 
   private makeFood(): Point {
