@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
-import Import from 'react-import'
 import styled from 'styled-components'
+import fastclick from 'fastclick'
 
 import Popup from 'components/Popup'
 
@@ -31,6 +31,8 @@ class App extends PureComponent<Props, State> {
         <Game
           width={20}
           height={20}
+          speed={2}
+          initialLength={4}
         />
       </Root>
     )
@@ -38,3 +40,5 @@ class App extends PureComponent<Props, State> {
 }
 
 export default App
+
+fastclick.attach(document.body)
