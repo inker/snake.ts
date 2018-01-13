@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react'
-import Import from 'react-import'
 import fastclick from 'fastclick'
 
 interface Props {
