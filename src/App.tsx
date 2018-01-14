@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash'
 import config from './config.json'
 
 import Game from 'pages/Game'
-import Popup from 'components/Popup'
+// import Popup from 'components/Popup'
 import NavBar from 'components/NavBar'
 
 const Root = styled.div`
@@ -34,7 +34,7 @@ class App extends PureComponent<Props, State> {
     waiting: true,
     width: config.size.default.width,
     height: config.size.default.height,
-    speed: config.size.default.speed,
+    speed: config.speed.default,
     score: 0,
     error: null,
   }

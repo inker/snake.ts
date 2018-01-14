@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react'
+import styled from 'styled-components'
+import isShallowEqual from 'shallowequal'
 import { range, random } from 'lodash'
 
 import Square from 'components/Square'
@@ -6,6 +8,7 @@ import Square from 'components/Square'
 import Point from 'utils/Point'
 import Direction from 'utils/Direction'
 import directionByKeyCode from 'utils/directionByKeyCode'
+import directionsAreOpposite from 'utils/directionsAreOpposite'
 import offsetByDirection from 'utils/offsetByDirection'
 
 import GameLoop from './GameLoop'
@@ -13,6 +16,10 @@ import GameLoop from './GameLoop'
 const START_X = 2
 const MAX_SVG_WIDTH = 700
 const MAX_SVG_HEIGHT = 400
+
+const Board = styled.svg`
+  border: 1px solid #999;
+`
 
 interface Props {
   width: number,
@@ -28,10 +35,12 @@ interface State {
     height: number,
   },
   interval: number,
+  running: boolean,
   snake: Point[],
   direction: Direction,
   food: Point | null,
   score: number,
+  gameOver: boolean,
 }
 
 class Game extends PureComponent<Props, State> {
@@ -41,7 +50,7 @@ class Game extends PureComponent<Props, State> {
     super(props)
 
     const interval = 1000 / props.speed
-    const snake = range(START_X, START_X + props.initialLength).map(x => new Point(
+    const snake = range(START_X + props.initialLength, START_X).map(x => new Point(
       x,
       props.height >> 1,
     ))
@@ -51,21 +60,19 @@ class Game extends PureComponent<Props, State> {
     const min = Math.min(rX, rY)
     const [newWidth, newHeight] = [props.width, props.height].map(i => i * min)
 
-    this.setState({
+    this.state = {
       svgDimensions: {
         width: newWidth,
         height: newHeight,
       },
       interval,
+      running: true,
       snake,
       direction: Direction.RIGHT,
       food: null,
       score: 0,
-    }, () => {
-      this.setState({
-        food: this.makeFood(),
-      })
-    })
+      gameOver: false,
+    }
 
     this.runGameLoop(interval)
 
@@ -91,6 +98,9 @@ class Game extends PureComponent<Props, State> {
       }
       return
     }
+    if (isShallowEqual(props, nextProps)) {
+      return
+    }
     this.reset(nextProps)
   }
 
@@ -101,14 +111,33 @@ class Game extends PureComponent<Props, State> {
     // TODO
   }
 
-  private onKeyDown = (e: KeyboardEvent) => {
+  componentDidUpdate() {
+    const { state } = this
+    if (state.gameOver) {
+      if (this.gameLoop) {
+        this.gameLoop.stop()
+      }
+    } else if (!state.running || state.food) {
+      return
+    }
     this.setState({
-      direction: directionByKeyCode(e.keyCode),
+      food: this.makeFood(),
+    })
+  }
+
+  private onKeyDown = (e: KeyboardEvent) => {
+    const { direction } = this.state
+    const dir = directionByKeyCode(e.keyCode)
+    if (dir < 0 || dir === direction || directionsAreOpposite(direction, dir)) {
+      return
+    }
+    this.setState({
+      direction: dir,
     })
   }
 
   private runGameLoop(interval: number) {
-    this.gameLoop = new GameLoop(interval, () => {
+    this.gameLoop = new GameLoop(interval, (numFrames) => {
       const { props } = this
       const {
         snake,
@@ -116,29 +145,28 @@ class Game extends PureComponent<Props, State> {
         food,
         score,
       } = this.state
-      snake.pop()
+      const oldTail = snake.pop()
       const oldHead = snake[0]
       const offset = offsetByDirection(direction)
       const newHead = oldHead.add(offset)
-      const newSnake = [newHead, ...snake]
 
       const eaten = food && newHead.equals(food)
-      const newScore = eaten ? score + 1 : score
-      if (eaten) {
-        props.onScoreChange(newScore)
+      const died = !eaten && snake.some(p => p.equals(newHead))
+        || newHead.x < 0
+        || newHead.y < 0
+        || newHead.x >= props.width
+        || newHead.y >= props.height
+
+      const newSnake = [newHead, ...snake]
+      if (eaten && oldTail) {
+        newSnake.push(oldTail)
       }
 
       this.setState({
         snake: newSnake,
         food: eaten ? null : food,
-        score: newScore,
-      }, () => {
-        if (this.state.food) {
-          return
-        }
-        this.setState({
-          food: this.makeFood(),
-        })
+        score: eaten ? score + 1 : score,
+        gameOver: died,
       })
     }).start()
   }
@@ -165,25 +193,32 @@ class Game extends PureComponent<Props, State> {
     } = this.state
 
     return (
-      <svg
+      <Board
         xmlns="http://www.w3.org/2000/svg"
         width={svgDimensions.width}
         height={svgDimensions.height}
         viewBox={`0 0 ${width} ${height}`}
+        style={{
+          border: '1px gray solid',
+        }}
       >
         {snake.map(p => (
           <Square
             coordinates={p}
-            color="red"
+            fill="red"
+            stroke="black"
+            strokeWidth={0.1}
           />
         ))}
         {food &&
           <Square
             coordinates={food}
-            color="blue"
+            fill="blue"
+            stroke="black"
+            strokeWidth={0.1}
           />
         }
-      </svg>
+      </Board>
     )
   }
 }

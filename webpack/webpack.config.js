@@ -26,10 +26,6 @@ module.exports = env => ({
       path.resolve(rootDir, 'src'),
       'node_modules',
     ],
-    // alias: env === 'dev' ? undefined : {
-    //   'react': path.join(rootDir, 'node_modules/react/dist/react.min.js'),
-    //   'react-dom': path.join(rootDir, 'node_modules/react-dom/dist/react-dom.min.js'),
-    // },
   },
   devtool: env === 'dev' ? 'source-map' : undefined,
   module: {

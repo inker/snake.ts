@@ -4,7 +4,7 @@ import Slider from 'rc-slider'
 
 import config from 'config.json'
 
-import ALink from 'components/ALink'
+// import ALink from 'components/ALink'
 import DivLink from 'components/DivLink'
 
 const Root = styled.div`

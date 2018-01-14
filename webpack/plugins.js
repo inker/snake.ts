@@ -12,7 +12,6 @@ const {
   HashedModuleIdsPlugin,
 } = require('webpack')
 
-const { TsConfigPathsPlugin } = require('awesome-typescript-loader')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
@@ -38,9 +37,6 @@ const chunkToName = (chunk) =>
   || null
 
 module.exports = env => [
-
-  // new OccurrenceOrderPlugin(),
-
   new DefinePlugin({
     'process.env': {
       NODE_ENV: JSON.stringify(env === 'dev' ? 'development' : 'production'),
@@ -52,27 +48,15 @@ module.exports = env => [
 
   new NamedChunksPlugin(chunkToName),
 
-  // new (env === 'dev' ? NamedModulesPlugin : HashedModuleIdsPlugin)(),
-
   new CommonsChunkPlugin({
     name: 'app',
     children: true,
-    deepChildren: true,
     minChunks: 2,
     async: 'commons',
   }),
 
   new CommonsChunkPlugin({
-    name: 'vendor-static',
-    // names: 'vendor',
-    // chunks: ['app'],
-    minChunks: ({ context }) => context && context.includes('node_modules'),
-  }),
-
-  new CommonsChunkPlugin({
-    async: 'vendor-main',
-    // names: 'vendor',
-    chunks: ['main'],
+    name: 'vendor',
     minChunks: ({ context }) => context && context.includes('node_modules'),
   }),
 
@@ -97,12 +81,6 @@ module.exports = env => [
       minifyURLs: true,
     },
   }),
-
-  // new CopyWebpackPlugin([
-  //   {
-  //     from: 'src/404.html',
-  //   }
-  // ]),
 
   env !== 'dev' && new UglifyJsPlugin({
     uglifyOptions: {

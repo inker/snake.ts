@@ -8,7 +8,10 @@ class Version extends PureComponent {
   render() {
     return (
       <Helmet>
-        <meta name="version" content={version} />
+        <meta
+          name="version"
+          content={version}
+        />
       </Helmet>
     )
   }

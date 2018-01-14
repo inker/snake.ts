@@ -1,4 +1,4 @@
-type Callback = () => void
+type Callback = (numFrames: number) => void
 
 export default class GameLoop {
   interval: number
@@ -13,7 +13,10 @@ export default class GameLoop {
 
   start() {
     this.running = true
-    window.requestAnimationFrame(this.step)
+    window.requestAnimationFrame((timestamp) => {
+      this.lastTimeStamp = timestamp
+      window.requestAnimationFrame(this.step)
+    })
     return this
   }
 
@@ -26,14 +29,13 @@ export default class GameLoop {
     if (!this.running) {
       return
     }
-    if (this.lastTimeStamp < 0) {
-      this.lastTimeStamp = timestamp
-    }
     const diff = timestamp - this.lastTimeStamp
     if (diff >= this.interval) {
       const ratio = ~~(diff / this.interval)
-      this.lastTimeStamp -= this.interval * ratio
-      this.callback()
+      this.lastTimeStamp = timestamp
+      for (let i = 0; i < ratio; ++i) {
+        this.callback(ratio)
+      }
     }
     window.requestAnimationFrame(this.step)
   }

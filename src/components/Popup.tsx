@@ -14,6 +14,7 @@ interface BackgroundProps {
   animate: boolean,
 }
 
+// @ts-ignore
 const Background = styled<BackgroundProps>(Overlay)`
   background-color: white;
   opacity: 0.75;
