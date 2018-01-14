@@ -204,10 +204,6 @@ class Game extends PureComponent<Props, State> {
     }).start()
   }
 
-  private makeInitialSnake(): Point[] {
-
-  }
-
   private makeFood(): Point {
     const { width, height } = this.props
     const { snake } = this.state
