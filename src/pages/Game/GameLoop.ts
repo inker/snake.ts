@@ -2,9 +2,9 @@ type Callback = () => void
 
 export default class GameLoop {
   interval: number
+  callback: Callback
   private lastTimeStamp = -1
   private running = false
-  callback: Callback
 
   constructor(interval: number, callback: Callback) {
     this.interval = interval
@@ -25,6 +25,9 @@ export default class GameLoop {
   private step = (timestamp: number) => {
     if (!this.running) {
       return
+    }
+    if (this.lastTimeStamp < 0) {
+      this.lastTimeStamp = timestamp
     }
     const diff = timestamp - this.lastTimeStamp
     if (diff >= this.interval) {

@@ -1,2 +1,22 @@
 {
+  "size": {
+    "default": {
+      "width": 20,
+      "height": 20
+    },
+    "min": {
+      "width": 10,
+      "height": 10
+    },
+    "max": {
+      "width": 100,
+      "height": 100
+    }
+  },
+  "speed": {
+    "default": 2,
+    "min": 1,
+    "max": 10
+  },
+  "initialLength": 4
 }
