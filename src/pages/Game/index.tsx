@@ -38,6 +38,7 @@ interface State {
   running: boolean,
   snake: Point[],
   direction: Direction,
+  lastDirection: Direction,
   food: Point | null,
   score: number,
   gameOver: boolean,
@@ -69,6 +70,7 @@ class Game extends PureComponent<Props, State> {
       running: true,
       snake,
       direction: Direction.RIGHT,
+      lastDirection: Direction.RIGHT,
       food: null,
       score: 0,
       gameOver: false,
@@ -126,9 +128,9 @@ class Game extends PureComponent<Props, State> {
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
-    const { direction } = this.state
+    const { lastDirection } = this.state
     const dir = directionByKeyCode(e.keyCode)
-    if (dir < 0 || dir === direction || directionsAreOpposite(direction, dir)) {
+    if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
       return
     }
     this.setState({
@@ -165,6 +167,7 @@ class Game extends PureComponent<Props, State> {
       this.setState({
         snake: newSnake,
         food: eaten ? null : food,
+        lastDirection: direction,
         score: eaten ? score + 1 : score,
         gameOver: died,
       })
