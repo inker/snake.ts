@@ -9,7 +9,6 @@
     "fastclick": "^1.0.6",
     "lodash": "^4.17.4",
     "normalize.css": "^7.0.0",
-    "rc-slider": "^8.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-helmet": "^5.2.0",
@@ -20,7 +19,6 @@
   "devDependencies": {
     "@types/fastclick": "^1.0.28",
     "@types/lodash": "^4.14.92",
-    "@types/rc-slider": "^8.2.2",
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
     "@types/react-helmet": "^5.0.3",
