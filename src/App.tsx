@@ -17,26 +17,28 @@ const Root = styled.div`
 interface Props {}
 
 interface State {
-  initial: boolean,
-  waiting: boolean,
   key: string,
   width: number,
   height: number,
   speed: number,
   score: number,
-  error: string | null,
+  running: boolean,
 }
 
 class App extends PureComponent<Props, State> {
   state: State = {
     key: uniqueId('key-'),
-    initial: true,
-    waiting: true,
     width: config.size.default.width,
     height: config.size.default.height,
     speed: config.speed.default,
     score: 0,
-    error: null,
+    running: true,
+  }
+
+  onTogglePause = () => {
+    this.setState({
+      running: !this.state.running,
+    })
   }
 
   onRefresh = () => {
@@ -51,21 +53,9 @@ class App extends PureComponent<Props, State> {
     })
   }
 
-  onWidthChange = (value: number) => {
+  onSettingChange = (setting: any, value: number) => {
     this.setState({
-      width: value,
-    })
-  }
-
-  onHeightChange = (value: number) => {
-    this.setState({
-      height: value,
-    })
-  }
-
-  onSpeedChange = (value: number) => {
-    this.setState({
-      speed: value,
+      [setting]: value,
     })
   }
 
@@ -74,13 +64,19 @@ class App extends PureComponent<Props, State> {
     return (
       <Root>
         <NavBar
+          paused={!state.running}
           refresh={this.onRefresh}
-          onWidthChange={this.onWidthChange}
-          onHeightChange={this.onHeightChange}
-          onSpeedChange={this.onSpeedChange}
+          onSettingChange={this.onSettingChange}
+          onTogglePause={this.onTogglePause}
+          values={{
+            width: state.width,
+            height: state.height,
+            speed: state.speed,
+          }}
         />
         <Game
           key={state.key}
+          running={state.running}
           width={state.width}
           height={state.height}
           speed={state.speed}

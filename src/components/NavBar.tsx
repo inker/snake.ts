@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
-import Slider from 'rc-slider'
 
 import config from 'config.json'
 
@@ -9,48 +8,83 @@ import DivLink from 'components/DivLink'
 
 const Root = styled.div`
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding-right: 10px;
   padding-bottom: 10px;
   font-size: 16px;
 `
 
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+`
+
 interface Props {
+  paused: boolean,
+  onTogglePause: () => void,
   refresh: () => void,
-  onWidthChange: (value: number) => void,
-  onHeightChange: (value: number) => void,
-  onSpeedChange: (value: number) => void,
+  onSettingChange: (setting: string, value: number) => void,
+  values: {
+    width: number,
+    height: number,
+    speed: number,
+  },
 }
 
 class Navbar extends PureComponent<Props> {
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target
+    const { variable } = input.dataset
+    if (variable) {
+      this.props.onSettingChange(variable, +input.value)
+    }
+  }
+
   render() {
     const { props } = this
     return (
       <Root>
-        {location &&
-          <DivLink onClick={props.refresh}>
-            Restart
-          </DivLink>
-        }
-        <Slider
-          min={config.size.min.width}
-          max={config.size.max.width}
-          defaultValue={config.size.default.width}
-          onAfterChange={props.onWidthChange}
-        />
-        <Slider
-          min={config.size.min.height}
-          max={config.size.max.height}
-          defaultValue={config.size.default.height}
-          onAfterChange={props.onHeightChange}
-        />
-        <Slider
-          min={config.speed.min}
-          max={config.speed.max}
-          defaultValue={config.speed.default}
-          onAfterChange={props.onSpeedChange}
-        />
+        <DivLink onClick={props.onTogglePause}>
+          {props.paused ? 'Resume' : 'Pause'}
+        </DivLink>
+        <DivLink onClick={props.refresh}>
+          Restart
+        </DivLink>
+        <Label>
+          Width ({props.values.width})
+          <input
+            type="range"
+            min={config.size.min.width}
+            max={config.size.max.width}
+            defaultValue={config.size.default.width}
+            data-variable="width"
+            onChange={this.onChange}
+          />
+        </Label>
+        <Label>
+          Height ({props.values.height})
+          <input
+            type="range"
+            min={config.size.min.height}
+            max={config.size.max.height}
+            defaultValue={config.size.default.height}
+            data-variable="height"
+            onChange={this.onChange}
+          />
+        </Label>
+        <Label>
+          Speed ({props.values.speed})
+          <input
+            type="range"
+            min={config.speed.min}
+            max={config.speed.max}
+            defaultValue={config.speed.default}
+            data-variable="speed"
+            onChange={this.onChange}
+          />
+        </Label>
       </Root>
     )
   }

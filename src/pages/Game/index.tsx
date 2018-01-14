@@ -22,6 +22,7 @@ const Board = styled.svg`
 `
 
 interface Props {
+  running: boolean,
   width: number,
   height: number,
   speed: number,
@@ -35,7 +36,6 @@ interface State {
     height: number,
   },
   interval: number,
-  running: boolean,
   snake: Point[],
   direction: Direction,
   lastDirection: Direction,
@@ -67,7 +67,6 @@ class Game extends PureComponent<Props, State> {
         height: newHeight,
       },
       interval,
-      running: true,
       snake,
       direction: Direction.RIGHT,
       lastDirection: Direction.RIGHT,
@@ -91,12 +90,18 @@ class Game extends PureComponent<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     const { props } = this
     if (nextProps.speed !== props.speed) {
-      const interval = 1000 / props.speed
+      const interval = 1000 / nextProps.speed
       this.setState({
         interval,
       })
       if (this.gameLoop) {
         this.gameLoop.interval = interval
+      }
+      return
+    }
+    if (nextProps.running !== props.running) {
+      if (this.gameLoop) {
+        this.gameLoop[nextProps.running ? 'start' : 'stop']()
       }
       return
     }
@@ -114,12 +119,12 @@ class Game extends PureComponent<Props, State> {
   }
 
   componentDidUpdate() {
-    const { state } = this
+    const { props, state } = this
     if (state.gameOver) {
       if (this.gameLoop) {
         this.gameLoop.stop()
       }
-    } else if (!state.running || state.food) {
+    } else if (!props.running || state.food) {
       return
     }
     this.setState({
