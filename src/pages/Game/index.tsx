@@ -17,11 +17,29 @@ const START_X = 2
 const MAX_SVG_WIDTH = 700
 const MAX_SVG_HEIGHT = 400
 
+const makeInitialSnake = (props: Props) => 
+  range(START_X + props.initialLength, START_X).map(x => new Point(
+    x,
+    props.height >> 1,
+  ))
+
+function getDimensions(props: Props) {
+  const rX = MAX_SVG_WIDTH / props.width
+  const rY = MAX_SVG_HEIGHT / props.height
+  const min = Math.min(rX, rY)
+  const [width, height] = [props.width, props.height].map(i => i * min)
+  return {
+    width,
+    height,
+  }
+}
+
 const Board = styled.svg`
   border: 1px solid #999;
 `
 
 interface Props {
+  gameId: string,
   running: boolean,
   width: number,
   height: number,
@@ -51,23 +69,11 @@ class Game extends PureComponent<Props, State> {
     super(props)
 
     const interval = 1000 / props.speed
-    const snake = range(START_X + props.initialLength, START_X).map(x => new Point(
-      x,
-      props.height >> 1,
-    ))
-
-    const rX = MAX_SVG_WIDTH / props.width
-    const rY = MAX_SVG_HEIGHT / props.height
-    const min = Math.min(rX, rY)
-    const [newWidth, newHeight] = [props.width, props.height].map(i => i * min)
 
     this.state = {
-      svgDimensions: {
-        width: newWidth,
-        height: newHeight,
-      },
+      svgDimensions: getDimensions(props),
       interval,
-      snake,
+      snake: makeInitialSnake(props),
       direction: Direction.RIGHT,
       lastDirection: Direction.RIGHT,
       food: null,
@@ -103,6 +109,23 @@ class Game extends PureComponent<Props, State> {
       if (this.gameLoop) {
         this.gameLoop[nextProps.running ? 'start' : 'stop']()
       }
+      return
+    }
+    if (nextProps.height !== props.height || nextProps.width !== props.width) {
+      this.setState({
+        svgDimensions: getDimensions(nextProps),
+      })
+      return
+    }
+    if (nextProps.gameId !== props.gameId) {
+      this.setState({
+        snake: makeInitialSnake(nextProps),
+        direction: Direction.RIGHT,
+        lastDirection: Direction.RIGHT,
+        food: null,
+        score: 0,
+        gameOver: false,
+      })
       return
     }
     if (isShallowEqual(props, nextProps)) {
@@ -152,7 +175,7 @@ class Game extends PureComponent<Props, State> {
         food,
         score,
       } = this.state
-      const oldTail = snake.pop()
+      const oldTail = snake.pop() as Point
       const oldHead = snake[0]
       const offset = offsetByDirection(direction)
       const newHead = oldHead.add(offset)
@@ -165,18 +188,24 @@ class Game extends PureComponent<Props, State> {
         || newHead.y >= props.height
 
       const newSnake = [newHead, ...snake]
-      if (eaten && oldTail) {
+      const newScore = eaten ? score + 1 : score
+      if (eaten) {
         newSnake.push(oldTail)
+        props.onScoreChange(newScore)
       }
 
       this.setState({
         snake: newSnake,
         food: eaten ? null : food,
         lastDirection: direction,
-        score: eaten ? score + 1 : score,
+        score: newScore,
         gameOver: died,
       })
     }).start()
+  }
+
+  private makeInitialSnake(): Point[] {
+
   }
 
   private makeFood(): Point {

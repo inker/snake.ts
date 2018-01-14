@@ -1,14 +1,14 @@
-type Callback = (numFrames: number) => void
+type OnUpdate = (numFrames: number) => void
 
 export default class GameLoop {
   interval: number
-  callback: Callback
+  onUpdate: OnUpdate
   private lastTimeStamp = -1
   private running = false
 
-  constructor(interval: number, callback: Callback) {
+  constructor(interval: number, onUpdate: OnUpdate) {
     this.interval = interval
-    this.callback = callback
+    this.onUpdate = onUpdate
   }
 
   start() {
@@ -34,7 +34,7 @@ export default class GameLoop {
       const ratio = ~~(diff / this.interval)
       this.lastTimeStamp = timestamp
       for (let i = 0; i < ratio; ++i) {
-        this.callback(ratio)
+        this.onUpdate(ratio)
       }
     }
     window.requestAnimationFrame(this.step)

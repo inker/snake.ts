@@ -17,20 +17,24 @@ const Root = styled.div`
 interface Props {}
 
 interface State {
-  key: string,
-  width: number,
-  height: number,
-  speed: number,
+  gameId: string,
+  values: {
+    width: number,
+    height: number,
+    speed: number,
+  },
   score: number,
   running: boolean,
 }
 
 class App extends PureComponent<Props, State> {
   state: State = {
-    key: uniqueId('key-'),
-    width: config.size.default.width,
-    height: config.size.default.height,
-    speed: config.speed.default,
+    gameId: uniqueId('key-'),
+    values: {
+      width: config.size.default.width,
+      height: config.size.default.height,
+      speed: config.speed.default,
+    },
     score: 0,
     running: true,
   }
@@ -43,7 +47,8 @@ class App extends PureComponent<Props, State> {
 
   onRefresh = () => {
     this.setState({
-      key: uniqueId('key-'),
+      gameId: uniqueId('gameid-'),
+      score: 0,
     })
   }
 
@@ -55,31 +60,32 @@ class App extends PureComponent<Props, State> {
 
   onSettingChange = (setting: any, value: number) => {
     this.setState({
-      [setting]: value,
+      values: {
+        ...this.state.values,
+        [setting]: value,
+      },
     })
   }
 
   render() {
     const { state } = this
+    const { values } = state
     return (
       <Root>
         <NavBar
           paused={!state.running}
-          refresh={this.onRefresh}
+          values={values}
+          score={state.score}
+          onRefresh={this.onRefresh}
           onSettingChange={this.onSettingChange}
           onTogglePause={this.onTogglePause}
-          values={{
-            width: state.width,
-            height: state.height,
-            speed: state.speed,
-          }}
         />
         <Game
-          key={state.key}
+          gameId={state.gameId}
           running={state.running}
-          width={state.width}
-          height={state.height}
-          speed={state.speed}
+          width={values.width}
+          height={values.height}
+          speed={values.speed}
           initialLength={config.initialLength}
           onScoreChange={this.onScoreChange}
         />

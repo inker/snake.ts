@@ -23,14 +23,15 @@ const Label = styled.label`
 
 interface Props {
   paused: boolean,
-  onTogglePause: () => void,
-  refresh: () => void,
-  onSettingChange: (setting: string, value: number) => void,
   values: {
     width: number,
     height: number,
     speed: number,
   },
+  score: number,
+  onTogglePause: () => void,
+  onRefresh: () => void,
+  onSettingChange: (setting: string, value: number) => void,
 }
 
 class Navbar extends PureComponent<Props> {
@@ -49,13 +50,14 @@ class Navbar extends PureComponent<Props> {
         <DivLink onClick={props.onTogglePause}>
           {props.paused ? 'Resume' : 'Pause'}
         </DivLink>
-        <DivLink onClick={props.refresh}>
+        <DivLink onClick={props.onRefresh}>
           Restart
         </DivLink>
         <Label>
           Width ({props.values.width})
           <input
             type="range"
+            disabled={!props.paused}
             min={config.size.min.width}
             max={config.size.max.width}
             defaultValue={config.size.default.width}
@@ -67,6 +69,7 @@ class Navbar extends PureComponent<Props> {
           Height ({props.values.height})
           <input
             type="range"
+            disabled={!props.paused}
             min={config.size.min.height}
             max={config.size.max.height}
             defaultValue={config.size.default.height}
@@ -78,6 +81,7 @@ class Navbar extends PureComponent<Props> {
           Speed ({props.values.speed})
           <input
             type="range"
+            disabled={!props.paused}
             min={config.speed.min}
             max={config.speed.max}
             defaultValue={config.speed.default}
@@ -85,6 +89,7 @@ class Navbar extends PureComponent<Props> {
             onChange={this.onChange}
           />
         </Label>
+        Score: {props.score}
       </Root>
     )
   }
