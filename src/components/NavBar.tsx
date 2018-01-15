@@ -3,8 +3,8 @@ import styled from 'styled-components'
 
 import config from 'config.json'
 
-// import ALink from 'components/ALink'
-import DivLink from 'components/DivLink'
+import Slider from './Slider'
+import Button from './Button'
 
 const Root = styled.div`
   display: flex;
@@ -16,30 +16,32 @@ const Root = styled.div`
   font-size: 16px;
 `
 
-const Label = styled.label`
-  display: flex;
-  flex-direction: column;
+const Score = styled.div`
+  margin: 10px;
+  font-size: 18px;
 `
 
 interface Props {
   paused: boolean,
+  gameOver: boolean,
   values: {
     width: number,
     height: number,
     speed: number,
   },
   score: number,
-  onTogglePause: () => void,
-  onRefresh: () => void,
-  onSettingChange: (setting: string, value: number) => void,
+  onTogglePause?: () => void,
+  onRestart?: () => void,
+  onSettingChange?: (setting: string, value: number) => void,
 }
 
 class Navbar extends PureComponent<Props> {
-  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  private onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target
     const { variable } = input.dataset
-    if (variable) {
-      this.props.onSettingChange(variable, +input.value)
+    const { props } = this
+    if (variable && props.onSettingChange) {
+      props.onSettingChange(variable, +input.value)
     }
   }
 
@@ -47,49 +49,45 @@ class Navbar extends PureComponent<Props> {
     const { props } = this
     return (
       <Root>
-        <DivLink onClick={props.onTogglePause}>
+        <Score>
+          Score: {props.score}
+        </Score>
+        <Button
+          disabled={props.gameOver}
+          onClick={props.onTogglePause}
+        >
           {props.paused ? 'Resume' : 'Pause'}
-        </DivLink>
-        <DivLink onClick={props.onRefresh}>
+        </Button>
+        <Button onClick={props.onRestart}>
           Restart
-        </DivLink>
-        <Label>
-          Width ({props.values.width})
-          <input
-            type="range"
-            disabled={!props.paused}
-            min={config.size.min.width}
-            max={config.size.max.width}
-            defaultValue={config.size.default.width}
-            data-variable="width"
-            onChange={this.onChange}
-          />
-        </Label>
-        <Label>
-          Height ({props.values.height})
-          <input
-            type="range"
-            disabled={!props.paused}
-            min={config.size.min.height}
-            max={config.size.max.height}
-            defaultValue={config.size.default.height}
-            data-variable="height"
-            onChange={this.onChange}
-          />
-        </Label>
-        <Label>
-          Speed ({props.values.speed})
-          <input
-            type="range"
-            disabled={!props.paused}
-            min={config.speed.min}
-            max={config.speed.max}
-            defaultValue={config.speed.default}
-            data-variable="speed"
-            onChange={this.onChange}
-          />
-        </Label>
-        Score: {props.score}
+        </Button>
+        <Slider
+          disabled={!props.paused}
+          value={props.values.width}
+          min={config.size.min.width}
+          max={config.size.max.width}
+          defaultValue={config.size.default.width}
+          data-variable="width"
+          onChange={this.onChange}
+        />
+        <Slider
+          disabled={!props.paused}
+          value={props.values.height}
+          min={config.size.min.height}
+          max={config.size.max.height}
+          defaultValue={config.size.default.height}
+          data-variable="height"
+          onChange={this.onChange}
+        />
+        <Slider
+          disabled={!props.paused}
+          value={props.values.speed}
+          min={config.speed.min}
+          max={config.speed.max}
+          defaultValue={config.speed.default}
+          data-variable="speed"
+          onChange={this.onChange}
+        />
       </Root>
     )
   }

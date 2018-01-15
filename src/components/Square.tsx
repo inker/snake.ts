@@ -14,7 +14,6 @@ class Square extends PureComponent<Props> {
     const { x, y } = props.coordinates
     return (
       <Rect
-        key={`${x},${y}`}
         color="red"
         x={x}
         y={y}

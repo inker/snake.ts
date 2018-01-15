@@ -6,11 +6,14 @@ import { uniqueId } from 'lodash'
 import config from './config.json'
 
 import Game from 'pages/Game'
-// import Popup from 'components/Popup'
 import NavBar from 'components/NavBar'
+
+// @ts-ignore
+import(/* webpackChunkName: "version" */ './version')
 
 const Root = styled.div`
   display: flex;
+  height: 100%;
   font-family: Tahoma, Arial, sans-serif;
 `
 
@@ -25,6 +28,7 @@ interface State {
   },
   score: number,
   running: boolean,
+  gameOver: boolean,
 }
 
 class App extends PureComponent<Props, State> {
@@ -37,6 +41,7 @@ class App extends PureComponent<Props, State> {
     },
     score: 0,
     running: true,
+    gameOver: false,
   }
 
   onTogglePause = () => {
@@ -45,10 +50,19 @@ class App extends PureComponent<Props, State> {
     })
   }
 
-  onRefresh = () => {
+  onRestart = () => {
     this.setState({
       gameId: uniqueId('gameid-'),
+      running: true,
+      gameOver: false,
       score: 0,
+    })
+  }
+
+  onGameOver = () => {
+    this.setState({
+      running: false,
+      gameOver: true,
     })
   }
 
@@ -74,9 +88,10 @@ class App extends PureComponent<Props, State> {
       <Root>
         <NavBar
           paused={!state.running}
+          gameOver={state.gameOver}
           values={values}
           score={state.score}
-          onRefresh={this.onRefresh}
+          onRestart={this.onRestart}
           onSettingChange={this.onSettingChange}
           onTogglePause={this.onTogglePause}
         />
@@ -88,6 +103,7 @@ class App extends PureComponent<Props, State> {
           speed={values.speed}
           initialLength={config.initialLength}
           onScoreChange={this.onScoreChange}
+          onGameOVer={this.onGameOver}
         />
       </Root>
     )
