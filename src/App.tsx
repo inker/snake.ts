@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
-import fastclick from 'fastclick'
 import { uniqueId } from 'lodash'
 
 import config from './config.json'
@@ -133,6 +132,3 @@ class App extends PureComponent<Props, State> {
 }
 
 export default App
-
-// @ts-ignore
-fastclick.attach(document.body)
