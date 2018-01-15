@@ -1,6 +1,10 @@
 import React, { PureComponent } from 'react'
-import styled from 'styled-components'
-import { range, random } from 'lodash'
+import {
+  identity,
+  initial,
+  range,
+  random,
+} from 'lodash'
 
 import Square from 'components/Square'
 import GameOver from 'components/GameOver'
@@ -21,10 +25,6 @@ const makeInitialSnake = (props: Props) =>
     x,
     props.height >> 1,
   ))
-
-const Root = styled.div`
-  
-`
 
 interface Props {
   gameId: string,
@@ -95,13 +95,6 @@ class Game extends PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate() {
-    const { state } = this
-    if (state.gameOver) {
-      this.gameLoop.stop()
-    }
-  }
-
   private onKeyDown = (e: KeyboardEvent) => {
     const { lastDirection } = this.state
     const dir = directionByKeyCode(e.keyCode)
@@ -122,7 +115,6 @@ class Game extends PureComponent<Props, State> {
         food,
         score,
       } = this.state
-      const oldTail = snake.pop() as Point
       const oldHead = snake[0]
       const offset = offsetByDirection(direction)
       const newHead = oldHead.add(offset)
@@ -134,15 +126,13 @@ class Game extends PureComponent<Props, State> {
         || newHead.x >= props.width
         || newHead.y >= props.height
 
-      const newSnake = [newHead, ...snake]
+      const newTail = (eaten ? identity : initial)(snake)
+      const newSnake = [newHead, ...newTail]
       const newScore = eaten ? score + 1 : score
-      if (eaten) {
-        newSnake.push(oldTail)
-        if (props.onScoreChange) {
-          props.onScoreChange(newScore)
-        }
-      }
 
+      if (eaten && props.onScoreChange) {
+        props.onScoreChange(newScore)
+      }
       if (died && props.onGameOVer) {
         props.onGameOVer()
       }
@@ -194,7 +184,7 @@ class Game extends PureComponent<Props, State> {
     } = this.state
 
     return (
-      <Root>
+      <>
         <Board
           width={width}
           height={height}
@@ -218,7 +208,7 @@ class Game extends PureComponent<Props, State> {
             />
           }
         </Board>
-      </Root>
+      </>
     )
   }
 }
