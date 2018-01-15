@@ -29,7 +29,7 @@ class GameOver extends PureComponent<Props> {
       <Root>
         <div>GAME OVER</div>
         <div>Your score: {score}</div>
-        <SmallText>To restart the game press Enter or click 'Restart'</SmallText>
+        <SmallText>To restart the game press Space or click 'Restart'</SmallText>
       </Root>
     )
   }

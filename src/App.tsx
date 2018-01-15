@@ -54,11 +54,13 @@ class App extends PureComponent<Props, State> {
 
   onKeyDown = (e) => {
     const { keyCode } = e
+    const { state } = this
     if (keyCode === 32) {
-      this.onTogglePause()
-      e.stopPropagation()
-    } else if (keyCode === 13 && this.state.gameOver) {
-      this.onRestart()
+      if (state.gameOver) {
+        this.onRestart()
+      } else {
+        this.onTogglePause()
+      }
       e.stopPropagation()
     }
   }
