@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react'
 
 import Point from 'utils/Point'
-import Rect from './Rect'
 
 interface Props {
   coordinates: Point,
@@ -13,7 +12,7 @@ class Square extends PureComponent<Props> {
     const { props } = this
     const { x, y } = props.coordinates
     return (
-      <Rect
+      <rect
         color="red"
         x={x}
         y={y}

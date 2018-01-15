@@ -79,7 +79,6 @@ class Game extends PureComponent<Props, State> {
     const { props } = this
     if (nextProps.gameId !== props.gameId) {
       this.reset(nextProps)
-      return
     }
     if (nextProps.speed !== props.speed) {
       const interval = 1000 / nextProps.speed
@@ -87,15 +86,16 @@ class Game extends PureComponent<Props, State> {
         interval,
       })
       this.gameLoop.interval = interval
-      return
     }
     if (nextProps.running !== props.running) {
       this.gameLoop[nextProps.running ? 'start' : 'stop']()
-      return
     }
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
+    if (!this.props.running) {
+      return
+    }
     const { lastDirection } = this.state
     const dir = directionByKeyCode(e.keyCode)
     if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
@@ -195,16 +195,12 @@ class Game extends PureComponent<Props, State> {
               key={`${p.x},${p.y}`}
               coordinates={p}
               fill="blue"
-              stroke="black"
-              strokeWidth={0}
             />
           ))}
           {food &&
             <Square
               coordinates={food}
               fill="red"
-              stroke="black"
-              strokeWidth={0}
             />
           }
         </Board>
