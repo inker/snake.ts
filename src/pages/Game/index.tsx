@@ -238,17 +238,17 @@ class Game extends PureComponent<Props, State> {
               <Square
                 key={`${p.x},${p.y}`}
                 coordinates={p}
-                fill="red"
+                fill="blue"
                 stroke="black"
-                strokeWidth={0.1}
+                strokeWidth={0}
               />
             ))}
             {food &&
               <Square
                 coordinates={food}
-                fill="blue"
+                fill="red"
                 stroke="black"
-                strokeWidth={0.1}
+                strokeWidth={0}
               />
             }
           </svg>

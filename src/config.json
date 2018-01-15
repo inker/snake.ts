@@ -14,9 +14,9 @@
     }
   },
   "speed": {
-    "default": 10,
+    "default": 25,
     "min": 1,
-    "max": 20
+    "max": 50
   },
   "initialLength": 4
 }

@@ -23,7 +23,7 @@ class GameOver extends PureComponent<Props> {
     const { score } = this.props
     return (
       <Root>
-        <div>Game over</div>
+        <div>GAME OVER</div>
         <div>Your score: {score}</div>
         <div>Click Restart to restart the game</div>
       </Root>
