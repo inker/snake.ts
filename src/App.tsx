@@ -13,7 +13,6 @@ import(/* webpackChunkName: "version" */ './version')
 
 const Root = styled.div`
   display: flex;
-  height: 100%;
   font-family: Tahoma, Arial, sans-serif;
 `
 
@@ -56,6 +55,8 @@ class App extends PureComponent<Props, State> {
     const { keyCode } = e
     const { state } = this
     if (keyCode === 32) {
+      // space
+      e.preventDefault()
       if (state.gameOver) {
         this.onRestart()
       } else {

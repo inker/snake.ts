@@ -11,6 +11,7 @@ const Root = styled.div`
 
   & > * {
     margin: 10px;
+    text-align: center;
   }
 `
 

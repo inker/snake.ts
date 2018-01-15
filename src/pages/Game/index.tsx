@@ -11,11 +11,10 @@ import directionByKeyCode from 'utils/directionByKeyCode'
 import directionsAreOpposite from 'utils/directionsAreOpposite'
 import offsetByDirection from 'utils/offsetByDirection'
 
+import Board from './Board'
 import GameLoop from './GameLoop'
 
 const START_X = 2
-const MAX_SVG_WIDTH = 700
-const MAX_SVG_HEIGHT = 500
 
 const makeInitialSnake = (props: Props) =>
   range(START_X + props.initialLength, START_X).map(x => new Point(
@@ -23,23 +22,8 @@ const makeInitialSnake = (props: Props) =>
     props.height >> 1,
   ))
 
-function getDimensions(props: Props) {
-  const rX = MAX_SVG_WIDTH / props.width
-  const rY = MAX_SVG_HEIGHT / props.height
-  const min = Math.min(rX, rY)
-  const [width, height] = [props.width, props.height].map(i => i * min)
-  return {
-    width,
-    height,
-  }
-}
-
 const Root = styled.div`
-  border: 1px solid #999;
-  // @ts-ignore
-  width: ${props => props.width ? `${props.width}px` : '100%'};
-  // @ts-ignore
-  height: ${props => props.height ? `${props.height}px` : '100%'};
+  
 `
 
 interface Props {
@@ -54,10 +38,6 @@ interface Props {
 }
 
 interface State {
-  svgDimensions: {
-    width: number,
-    height: number,
-  },
   interval: number,
   snake: Point[],
   direction: Direction,
@@ -77,7 +57,6 @@ class Game extends PureComponent<Props, State> {
     const snake = makeInitialSnake(props)
 
     this.state = {
-      svgDimensions: getDimensions(props),
       interval,
       snake,
       direction: Direction.RIGHT,
@@ -112,12 +91,6 @@ class Game extends PureComponent<Props, State> {
     }
     if (nextProps.running !== props.running) {
       this.gameLoop[nextProps.running ? 'start' : 'stop']()
-      return
-    }
-    if (nextProps.height !== props.height || nextProps.width !== props.width) {
-      this.setState({
-        svgDimensions: getDimensions(nextProps),
-      })
       return
     }
   }
@@ -214,7 +187,6 @@ class Game extends PureComponent<Props, State> {
     } = this.props
 
     const {
-      svgDimensions,
       snake,
       food,
       gameOver,
@@ -222,37 +194,30 @@ class Game extends PureComponent<Props, State> {
     } = this.state
 
     return (
-      <Root
-        // @ts-ignore
-        width={svgDimensions.width}
-        height={svgDimensions.height}
-      >
-        {gameOver ? <GameOver score={score} /> :
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={svgDimensions.width}
-            height={svgDimensions.height}
-            viewBox={`0 0 ${width} ${height}`}
-          >
-            {snake.map(p => (
-              <Square
-                key={`${p.x},${p.y}`}
-                coordinates={p}
-                fill="blue"
-                stroke="black"
-                strokeWidth={0}
-              />
-            ))}
-            {food &&
-              <Square
-                coordinates={food}
-                fill="red"
-                stroke="black"
-                strokeWidth={0}
-              />
-            }
-          </svg>
-        }
+      <Root>
+        <Board
+          width={width}
+          height={height}
+          popup={gameOver ? <GameOver score={score} /> : null}
+        >
+          {snake.map(p => (
+            <Square
+              key={`${p.x},${p.y}`}
+              coordinates={p}
+              fill="blue"
+              stroke="black"
+              strokeWidth={0}
+            />
+          ))}
+          {food &&
+            <Square
+              coordinates={food}
+              fill="red"
+              stroke="black"
+              strokeWidth={0}
+            />
+          }
+        </Board>
       </Root>
     )
   }
