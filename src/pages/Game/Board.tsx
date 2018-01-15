@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 
+import Grid from 'components/Grid'
+
 const MAX_SVG_WIDTH = 700
 const MAX_SVG_HEIGHT = 500
 
@@ -75,6 +77,7 @@ class Board extends PureComponent<Props, State> {
           // @ts-ignore
           visible={!props.popup}
         >
+          <Grid size={1} />
           {props.children}
         </Svg>
         {props.popup}
