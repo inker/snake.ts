@@ -44,6 +44,25 @@ class App extends PureComponent<Props, State> {
     gameOver: false,
   }
 
+  componentWillMount() {
+    window.addEventListener('keydown', this.onKeyDown)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown)
+  }
+
+  onKeyDown = (e) => {
+    const { keyCode } = e
+    if (keyCode === 32) {
+      this.onTogglePause()
+      e.stopPropagation()
+    } else if (keyCode === 13 && this.state.gameOver) {
+      this.onRestart()
+      e.stopPropagation()
+    }
+  }
+
   onTogglePause = () => {
     this.setState({
       running: !this.state.running,

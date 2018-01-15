@@ -14,6 +14,10 @@ const Root = styled.div`
   }
 `
 
+const SmallText = styled.div`
+  font-size: 20px;
+`
+
 interface Props {
   score: number
 }
@@ -25,7 +29,7 @@ class GameOver extends PureComponent<Props> {
       <Root>
         <div>GAME OVER</div>
         <div>Your score: {score}</div>
-        <div>Click Restart to restart the game</div>
+        <SmallText>To restart the game press Enter or click 'Restart'</SmallText>
       </Root>
     )
   }
