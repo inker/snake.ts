@@ -1,3 +1,3 @@
 # snake.ts
 
-Works in all major browsers (Chrome, Firefox, etc) with the exception of IE & Edge. Sometimes, Safari disappoints, too.
+A simple snake game written in TypeScript. Works in all major browsers.
