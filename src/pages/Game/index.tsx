@@ -65,8 +65,10 @@ class Game extends PureComponent<Props, State> {
       score: 0,
       gameOver: false,
     }
+  }
 
-    this.runGameLoop(interval)
+  componentDidMount() {
+    this.runGameLoop(this.state.interval)
     window.addEventListener('keydown', this.onKeyDown)
   }
 
