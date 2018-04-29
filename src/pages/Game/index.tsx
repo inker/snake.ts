@@ -131,6 +131,7 @@ class Game extends PureComponent<Props, State> {
         || newHead.x >= props.width
         || newHead.y >= props.height
 
+      // @ts-ignore
       const newTail = (eaten ? identity : initial)(snake)
       const newSnake = [newHead, ...newTail]
       const newScore = eaten ? score + 1 : score
