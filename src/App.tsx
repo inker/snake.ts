@@ -42,7 +42,7 @@ class App extends PureComponent<Props, State> {
     gameOver: false,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     window.addEventListener('keydown', this.onKeyDown)
   }
 

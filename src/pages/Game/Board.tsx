@@ -51,7 +51,7 @@ class Board extends PureComponent<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { props } = this
     if (nextProps.width !== props.width || nextProps.height || props.height) {
       this.setState({

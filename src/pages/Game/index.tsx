@@ -72,26 +72,29 @@ class Game extends PureComponent<Props, State> {
     window.addEventListener('keydown', this.onKeyDown)
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown)
-    this.gameLoop.stop()
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(prevProps: Props) {
     const { props } = this
-    if (nextProps.gameId !== props.gameId) {
-      this.reset(nextProps)
+
+    if (props.gameId !== prevProps.gameId) {
+      this.reset()
     }
-    if (nextProps.speed !== props.speed) {
-      const interval = 1000 / nextProps.speed
+
+    if (props.running !== prevProps.running) {
+      this.gameLoop[props.running ? 'start' : 'stop']()
+    }
+
+    if (props.speed !== prevProps.speed) {
+      const interval = 1000 / props.speed
       this.setState({
         interval,
       })
       this.gameLoop.interval = interval
     }
-    if (nextProps.running !== props.running) {
-      this.gameLoop[nextProps.running ? 'start' : 'stop']()
-    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown)
+    this.gameLoop.stop()
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -149,8 +152,12 @@ class Game extends PureComponent<Props, State> {
     }).start()
   }
 
-  private reset(props) {
-    const { gameLoop } = this
+  private reset() {
+    const {
+      props,
+      gameLoop,
+    } = this
+
     gameLoop.stop()
     const snake = makeInitialSnake(props)
     this.setState({
