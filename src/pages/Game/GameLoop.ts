@@ -17,12 +17,10 @@ export default class GameLoop {
       this.lastTimeStamp = timestamp
       window.requestAnimationFrame(this.step)
     })
-    return this
   }
 
   stop() {
     this.running = false
-    return this
   }
 
   private step = (timestamp: number) => {

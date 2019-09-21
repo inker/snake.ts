@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import {
-  identity,
   initial,
   range,
   random,
@@ -26,6 +25,28 @@ const makeInitialSnake = (props: Props) =>
     props.height >> 1,
   ))
 
+function makeFood(width: number, height: number, snake: Point[]) {
+  const food = new Point(random(0, width - 1), random(0, height - 1))
+  return snake.some(p => p.equals(food))
+    ? makeFood(width, height, snake)
+    : food
+}
+
+function getInitialState(props: Props): State {
+  const interval = 1000 / props.speed
+  const snake = makeInitialSnake(props)
+
+  return {
+    interval,
+    snake,
+    direction: Direction.RIGHT,
+    lastDirection: Direction.RIGHT,
+    food: makeFood(props.width, props.height, snake),
+    score: 0,
+    gameOver: false,
+  }
+}
+
 interface Props {
   gameId: string,
   running: boolean,
@@ -34,7 +55,7 @@ interface Props {
   speed: number,
   initialLength: number,
   onScoreChange?: (score: number) => void,
-  onGameOVer?: () => void,
+  onGameOver?: () => void,
 }
 
 interface State {
@@ -50,25 +71,14 @@ interface State {
 class Game extends PureComponent<Props, State> {
   private gameLoop: GameLoop
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props)
-
-    const interval = 1000 / props.speed
-    const snake = makeInitialSnake(props)
-
-    this.state = {
-      interval,
-      snake,
-      direction: Direction.RIGHT,
-      lastDirection: Direction.RIGHT,
-      food: this.makeFood(snake),
-      score: 0,
-      gameOver: false,
-    }
+    this.state = getInitialState(props)
+    this.gameLoop = new GameLoop(this.state.interval, this.onLoopUpdate)
   }
 
   componentDidMount() {
-    this.runGameLoop(this.state.interval)
+    this.gameLoop.start()
     window.addEventListener('keydown', this.onKeyDown)
   }
 
@@ -97,6 +107,11 @@ class Game extends PureComponent<Props, State> {
     this.gameLoop.stop()
   }
 
+  private reset() {
+    this.setState(getInitialState(this.props))
+    this.gameLoop.start()
+  }
+
   private onKeyDown = (e: KeyboardEvent) => {
     if (!this.props.running) {
       return
@@ -111,73 +126,50 @@ class Game extends PureComponent<Props, State> {
     })
   }
 
-  private runGameLoop(interval: number) {
-    this.gameLoop = new GameLoop(interval, (numFrames) => {
-      const { props } = this
-      const {
-        snake,
-        direction,
-        food,
-        score,
-      } = this.state
-      const oldHead = snake[0]
-      const offset = offsetByDirection(direction)
-      const newHead = oldHead.add(offset)
-
-      const eaten = food && newHead.equals(food)
-      const died = !eaten && snake.some(p => p.equals(newHead))
-        || newHead.x < 0
-        || newHead.y < 0
-        || newHead.x >= props.width
-        || newHead.y >= props.height
-
-      // @ts-ignore
-      const newTail = (eaten ? identity : initial)(snake)
-      const newSnake = [newHead, ...newTail]
-      const newScore = eaten ? score + 1 : score
-
-      if (eaten && props.onScoreChange) {
-        props.onScoreChange(newScore)
-      }
-      if (died && props.onGameOVer) {
-        props.onGameOVer()
-      }
-
-      this.setState({
-        snake: newSnake,
-        food: eaten ? this.makeFood(newSnake) : food,
-        lastDirection: direction,
-        score: newScore,
-        gameOver: died,
-      })
-    }).start()
-  }
-
-  private reset() {
+  private onLoopUpdate = () => {
     const {
-      props,
-      gameLoop,
-    } = this
+      width,
+      height,
+      onScoreChange,
+      onGameOver,
+    } = this.props
 
-    gameLoop.stop()
-    const snake = makeInitialSnake(props)
-    this.setState({
+    const {
       snake,
-      direction: Direction.RIGHT,
-      lastDirection: Direction.RIGHT,
-      food: this.makeFood(snake),
-      score: 0,
-      gameOver: false,
-    })
-    gameLoop.start()
-  }
+      direction,
+      food,
+      score,
+    } = this.state
 
-  private makeFood(snake: Point[]): Point {
-    const { width, height } = this.props
-    const food = new Point(random(0, width - 1), random(0, height - 1))
-    return snake.some(p => p.equals(food))
-      ? this.makeFood(snake)
-      : food
+    const oldHead = snake[0]
+    const offset = offsetByDirection(direction)
+    const newHead = oldHead.add(offset)
+
+    const eaten = food && newHead.equals(food)
+    const died = !eaten && snake.some(p => p.equals(newHead))
+      || newHead.x < 0
+      || newHead.y < 0
+      || newHead.x >= width
+      || newHead.y >= height
+
+    const newTail = eaten ? snake : initial(snake)
+    const newSnake = [newHead, ...newTail]
+    const newScore = eaten ? score + 1 : score
+
+    if (eaten && onScoreChange) {
+      onScoreChange(newScore)
+    }
+    if (died && onGameOver) {
+      onGameOver()
+    }
+
+    this.setState({
+      snake: newSnake,
+      food: eaten ? makeFood(width, height, newSnake) : food,
+      lastDirection: direction,
+      score: newScore,
+      gameOver: died,
+    })
   }
 
   render() {
@@ -207,12 +199,12 @@ class Game extends PureComponent<Props, State> {
               fill="blue"
             />
           ))}
-          {food &&
+          {food && (
             <Square
               coordinates={food}
               fill="red"
             />
-          }
+          )}
         </Board>
       </>
     )

@@ -124,7 +124,7 @@ class App extends PureComponent<Props, State> {
           speed={values.speed}
           initialLength={config.initialLength}
           onScoreChange={this.onScoreChange}
-          onGameOVer={this.onGameOver}
+          onGameOver={this.onGameOver}
         />
       </Root>
     )
