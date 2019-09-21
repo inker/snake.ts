@@ -4,7 +4,6 @@ const {
   DefinePlugin,
   HotModuleReplacementPlugin,
   optimize: {
-    CommonsChunkPlugin,
     OccurrenceOrderPlugin,
   },
   NamedChunksPlugin,
@@ -12,14 +11,18 @@ const {
   HashedModuleIdsPlugin,
 } = require('webpack')
 
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+
+const getCurrentDate = require('./utils/getCurrentDate')
+const getLastCommitHash = require('./utils/getLastCommitHash')
 
 const SEP_RE = new RegExp(`\\${path.sep}`, 'g')
 const IS_REACT = /node_modules.+?(react|styled)/
 const PAGES_RE = /pages[\/\\](.+?)(index)?\.[jt]sx?/
+
+const currentDate = getCurrentDate()
+const lastCommitHash = getLastCommitHash()
 
 const moduleToFileNames = (module) => {
   if (!module.request || !module.optional) {
@@ -32,7 +35,7 @@ const moduleToFileNames = (module) => {
 
 const chunkToName = (chunk) =>
   chunk.name
-  || chunk.modules.map(moduleToFileNames).find((name) => name)
+  || Array.from(chunk.modulesIterable, moduleToFileNames).find((name) => name)
   || null
 
 module.exports = env => [
@@ -40,29 +43,13 @@ module.exports = env => [
     'process.env': {
       NODE_ENV: JSON.stringify(env === 'dev' ? 'development' : 'production'),
     },
-    __VERSION__: JSON.stringify(new Date().toUTCString()),
+    __MODIFICATION_DATE__: JSON.stringify(currentDate),
+    __VERSION__: JSON.stringify(lastCommitHash),
   }),
 
   env === 'dev' && new HotModuleReplacementPlugin(),
 
   new NamedChunksPlugin(chunkToName),
-
-  new CommonsChunkPlugin({
-    name: 'app',
-    children: true,
-    minChunks: 2,
-    async: 'commons',
-  }),
-
-  new CommonsChunkPlugin({
-    name: 'vendor',
-    minChunks: ({ context }) => context && context.includes('node_modules'),
-  }),
-
-  new CommonsChunkPlugin({
-    name: 'runtime',
-    minChunks: Infinity,
-  }),
 
   new HtmlWebpackPlugin({
     filename: 'index.html',
@@ -81,24 +68,6 @@ module.exports = env => [
     },
   }),
 
-  env !== 'dev' && new UglifyJsPlugin({
-    uglifyOptions: {
-      compress: {
-        warnings: false,
-        dead_code: true,
-        properties: true,
-        unused: true,
-        join_vars: true,
-      },
-      mangle: {
-        safari10: true,
-      },
-      output: {
-        comments: false,
-      },
-    },
-    // sourceMap: true, // retains sourcemaps for typescript
-  }),
 
   env === 'analyze' && new BundleAnalyzerPlugin(),
 ].filter(item => item)

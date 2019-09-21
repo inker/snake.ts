@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { memo } from 'react'
 import styled from 'styled-components'
 
 import randomId from 'utils/randomId'
@@ -15,29 +15,28 @@ interface Props {
   size: number,
 }
 
-class Grid extends PureComponent<Props> {
-  render() {
-    const { size } = this.props
-    return (
-      <>
-        <defs>
-          <pattern
-            id={patternId}
-            width={size}
-            height={size}
-            patternUnits="userSpaceOnUse"
-          >
-            <GridPath d={`M ${size} 0 L 0 0 0 ${size}`} />
-          </pattern>
-        </defs>
-        <rect
-          width="100%"
-          height="100%"
-          fill={`url(#${patternId})`}
-        />
-      </>
-    )
-  }
+const Grid = ({
+  size,
+}: Props) => {
+  return (
+    <>
+      <defs>
+        <pattern
+          id={patternId}
+          width={size}
+          height={size}
+          patternUnits="userSpaceOnUse"
+        >
+          <GridPath d={`M ${size} 0 L 0 0 0 ${size}`} />
+        </pattern>
+      </defs>
+      <rect
+        width="100%"
+        height="100%"
+        fill={`url(#${patternId})`}
+      />
+    </>
+  )
 }
 
-export default Grid
+export default memo(Grid)

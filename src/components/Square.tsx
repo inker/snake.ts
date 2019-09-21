@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { memo } from 'react'
 
 import Point from 'utils/Point'
 
@@ -7,21 +7,21 @@ interface Props {
   [prop: string]: any,
 }
 
-class Square extends PureComponent<Props> {
-  render() {
-    const { props } = this
-    const { x, y } = props.coordinates
-    return (
-      <rect
-        color="red"
-        x={x}
-        y={y}
-        width={1}
-        height={1}
-        {...props}
-      />
-    )
-  }
+const Square = ({
+  coordinates,
+  ...props
+}: Props) => {
+  const { x, y } = coordinates
+  return (
+    <rect
+      color="red"
+      x={x}
+      y={y}
+      width={1}
+      height={1}
+      {...props}
+    />
+  )
 }
 
-export default Square
+export default memo(Square)

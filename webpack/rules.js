@@ -1,6 +1,8 @@
 const { createLodashTransformer } = require('typescript-plugin-lodash')
 
-const tsOptions = env => env === 'dev' ? {} : {
+const tsOptions = env => env === 'dev' ? {
+  useCache: true,
+} : {
   getCustomTransformers: () => ({ before: [createLodashTransformer()] }),
 }
 

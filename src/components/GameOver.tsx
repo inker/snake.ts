@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { memo } from 'react'
 import styled from 'styled-components'
 
 const Root = styled.div`
@@ -23,17 +23,16 @@ interface Props {
   score: number
 }
 
-class GameOver extends PureComponent<Props> {
-  render() {
-    const { score } = this.props
-    return (
-      <Root>
-        <div>GAME OVER</div>
-        <div>Your score: {score}</div>
-        <SmallText>To restart the game press Space or click 'Restart'</SmallText>
-      </Root>
-    )
-  }
+const GameOver = ({
+  score,
+}: Props) => {
+  return (
+    <Root>
+      <div>GAME OVER</div>
+      <div>Your score: {score}</div>
+      <SmallText>To restart the game press Space or click 'Restart'</SmallText>
+    </Root>
+  )
 }
 
-export default GameOver
+export default memo(GameOver)

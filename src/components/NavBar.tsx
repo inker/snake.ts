@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { memo, useCallback } from 'react'
 import styled from 'styled-components'
 
 import config from 'config.json'
@@ -35,62 +35,58 @@ interface Props {
   onSettingChange?: (setting: string, value: number) => void,
 }
 
-class Navbar extends PureComponent<Props> {
-  private onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const Navbar = (props: Props) => {
+  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target
     const { variable } = input.dataset
-    const { props } = this
     if (variable && props.onSettingChange) {
       props.onSettingChange(variable, +input.value)
     }
-  }
+  }, [props.onSettingChange])
 
-  render() {
-    const { props } = this
-    return (
-      <Root>
-        <Score>
-          Score: {props.score}
-        </Score>
-        <Button
-          disabled={props.gameOver}
-          onClick={props.onTogglePause}
-        >
-          {props.paused ? 'Resume' : 'Pause'}
-        </Button>
-        <Button onClick={props.onRestart}>
-          Restart
-        </Button>
-        <Slider
-          disabled={!props.paused}
-          value={props.values.width}
-          min={config.size.min.width}
-          max={config.size.max.width}
-          defaultValue={config.size.default.width}
-          data-variable="width"
-          onChange={this.onChange}
-        />
-        <Slider
-          disabled={!props.paused}
-          value={props.values.height}
-          min={config.size.min.height}
-          max={config.size.max.height}
-          defaultValue={config.size.default.height}
-          data-variable="height"
-          onChange={this.onChange}
-        />
-        <Slider
-          disabled={!props.paused}
-          value={props.values.speed}
-          min={config.speed.min}
-          max={config.speed.max}
-          defaultValue={config.speed.default}
-          data-variable="speed"
-          onChange={this.onChange}
-        />
-      </Root>
-    )
-  }
+  return (
+    <Root>
+      <Score>
+        Score: {props.score}
+      </Score>
+      <Button
+        disabled={props.gameOver}
+        onClick={props.onTogglePause}
+      >
+        {props.paused ? 'Resume' : 'Pause'}
+      </Button>
+      <Button onClick={props.onRestart}>
+        Restart
+      </Button>
+      <Slider
+        disabled={!props.paused}
+        value={props.values.width}
+        min={config.size.min.width}
+        max={config.size.max.width}
+        defaultValue={config.size.default.width}
+        data-variable="width"
+        onChange={onChange}
+      />
+      <Slider
+        disabled={!props.paused}
+        value={props.values.height}
+        min={config.size.min.height}
+        max={config.size.max.height}
+        defaultValue={config.size.default.height}
+        data-variable="height"
+        onChange={onChange}
+      />
+      <Slider
+        disabled={!props.paused}
+        value={props.values.speed}
+        min={config.speed.min}
+        max={config.speed.max}
+        defaultValue={config.speed.default}
+        data-variable="speed"
+        onChange={onChange}
+      />
+    </Root>
+  )
 }
 
-export default Navbar
+export default memo(Navbar)

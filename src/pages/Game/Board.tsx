@@ -1,4 +1,9 @@
-import React, { PureComponent } from 'react'
+import React, {
+  FC,
+  useState,
+  useEffect,
+  memo,
+} from 'react'
 import styled from 'styled-components'
 
 import Grid from 'components/Grid'
@@ -6,11 +11,11 @@ import Grid from 'components/Grid'
 const MAX_SVG_WIDTH = 700
 const MAX_SVG_HEIGHT = 500
 
-function getDimensions(props: Props) {
-  const rX = MAX_SVG_WIDTH / props.width
-  const rY = MAX_SVG_HEIGHT / props.height
+function getDimensions(w: number, h: number) {
+  const rX = MAX_SVG_WIDTH / w
+  const rY = MAX_SVG_HEIGHT / h
   const min = Math.min(rX, rY)
-  const [width, height] = [props.width, props.height].map(i => i * min)
+  const [width, height] = [w, h].map(i => i * min)
   return {
     width,
     height,
@@ -36,54 +41,41 @@ interface Props {
   popup?: React.ReactElement<any> | null,
 }
 
-interface State {
-  svgDimensions: {
-    width: number,
-    height: number,
-  },
+interface Dimensions {
+  width: number,
+  height: number,
 }
 
-class Board extends PureComponent<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = {
-      svgDimensions: getDimensions(props),
-    }
-  }
+const Board: FC<Props> = ({
+  width,
+  height,
+  popup,
+  children,
+}) => {
+  const [svgDimensions, setSvgDimensions] = useState<Dimensions>(getDimensions(width, height))
 
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { props } = this
-    if (nextProps.width !== props.width || nextProps.height || props.height) {
-      this.setState({
-        svgDimensions: getDimensions(nextProps),
-      })
-    }
-  }
+  useEffect(() => {
+    setSvgDimensions(getDimensions(width, height))
+  }, [width, height])
 
-  render() {
-    const { props } = this
-    const { svgDimensions } = this.state
-    return (
-      <Root
-        // @ts-ignore
+  return (
+    <Root
+      width={svgDimensions.width}
+      height={svgDimensions.height}
+    >
+      <Svg
+        xmlns="http://www.w3.org/2000/svg"
         width={svgDimensions.width}
         height={svgDimensions.height}
+        viewBox={`0 0 ${width} ${height}`}
+        visible={!popup}
       >
-        <Svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={svgDimensions.width}
-          height={svgDimensions.height}
-          viewBox={`0 0 ${props.width} ${props.height}`}
-          // @ts-ignore
-          visible={!props.popup}
-        >
-          <Grid size={1} />
-          {props.children}
-        </Svg>
-        {props.popup}
-      </Root>
-    )
-  }
+        <Grid size={1} />
+        {children}
+      </Svg>
+      {popup}
+    </Root>
+  )
 }
 
-export default Board
+export default memo(Board) as typeof Board

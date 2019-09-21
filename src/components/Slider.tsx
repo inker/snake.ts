@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { memo } from 'react'
 import styled from 'styled-components'
 import { capitalize } from 'lodash'
 
@@ -38,31 +38,30 @@ interface Props {
   [prop: string]: any,
 }
 
-class Slider extends PureComponent<Props> {
-  render() {
-    const { value, ...props } = this.props
-    return (
-      <Root>
-        <Label
-          // @ts-ignore
-          disabled={props.disabled}
-        >
-          {capitalize(props['data-variable'])}
-          <Input
-            // @ts-ignore
-            type="range"
-            {...props}
-          />
-        </Label>
-        <Value
-          // @ts-ignore
-          disabled={props.disabled}
-        >
-          {value}
-        </Value>
-      </Root>
-    )
-  }
+const Slider = ({
+  value,
+  ...props
+}: Props) => {
+  return (
+    <Root>
+      <Label
+        // @ts-ignore
+        disabled={props.disabled}
+      >
+        {capitalize(props['data-variable'])}
+        <Input
+          type="range"
+          {...props}
+        />
+      </Label>
+      <Value
+        // @ts-ignore
+        disabled={props.disabled}
+      >
+        {value}
+      </Value>
+    </Root>
+  )
 }
 
-export default Slider
+export default memo(Slider)
