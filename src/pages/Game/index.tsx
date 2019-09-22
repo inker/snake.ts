@@ -1,5 +1,6 @@
 import React, {
   useRef,
+  useState,
   useEffect,
   memo,
 } from 'react'
@@ -17,7 +18,6 @@ import Point from 'utils/Point'
 import Direction from 'utils/Direction'
 import offsetByDirection from 'utils/offsetByDirection'
 
-import usePartialState from 'utils/hooks/usePartialState'
 import useArrowKeys from 'utils/hooks/useArrowKeys'
 
 import Board from './Board'
@@ -42,12 +42,10 @@ function makeFood(boardWidth: number, boardHeight: number, snake: Point[]) {
 }
 
 function getInitialState(props: Props): State {
-  const interval = 1000 / props.speed
   const snake = makeInitialSnake(props.initialLength, props.height)
   const food = makeFood(props.width, props.height, snake)
 
   return {
-    interval,
     snake,
     food,
     gameOver: false,
@@ -67,16 +65,12 @@ interface Props {
 }
 
 interface State {
-  interval: number,
   snake: Point[],
   food: Point | null,
   gameOver: boolean,
 }
 
 const Game = (props: Props) => {
-  const [state, setState] = usePartialState<State>(getInitialState(props))
-  const [direction, setDirection, setLastDirection] = useArrowKeys(Direction.RIGHT)
-
   const {
     gameId,
     running,
@@ -88,8 +82,11 @@ const Game = (props: Props) => {
     onGameOver,
   } = props
 
+  const [state, setState] = useState<State>(getInitialState(props))
+  const [interval, setInterval] = useState(1000 / speed)
+  const [direction, setDirection, setLastDirection] = useArrowKeys(Direction.RIGHT)
+
   const {
-    interval,
     snake,
     food,
     gameOver,
@@ -153,9 +150,7 @@ const Game = (props: Props) => {
 
   useEffect(() => {
     const newInterval = 1000 / props.speed
-    setState({
-      interval: newInterval,
-    })
+    setInterval(newInterval)
     gameLoop.interval = newInterval
   }, [speed])
 
