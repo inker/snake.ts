@@ -12,6 +12,7 @@ import {
 } from 'lodash'
 
 import Square from 'components/Square'
+import Start from 'components/Start'
 import GameOver from 'components/GameOver'
 
 import Point from 'utils/Point'
@@ -53,9 +54,10 @@ function getInitialState(props: Props): State {
 
 interface Props {
   gameId: string,
-  running: boolean,
+  isRunning: boolean,
   score: number,
-  gameOver: boolean,
+  isGameOver: boolean,
+  isStart: boolean,
   width: number,
   height: number,
   speed: number,
@@ -72,12 +74,13 @@ interface State {
 const Game = (props: Props) => {
   const {
     gameId,
-    running,
+    isRunning,
     width,
     height,
     speed,
     score,
-    gameOver,
+    isGameOver,
+    isStart,
     onScoreChange,
     onGameOver,
   } = props
@@ -85,6 +88,8 @@ const Game = (props: Props) => {
   const [state, setState] = useState<State>(getInitialState(props))
   const [interval, setInterval] = useState(1000 / speed)
   const [direction, syncDirection, resetDirection] = useSnakeDirection(Direction.RIGHT)
+
+  const isPaused = !isRunning || isGameOver || isStart
 
   const {
     snake,
@@ -126,7 +131,6 @@ const Game = (props: Props) => {
   gameLoop.onUpdate = onLoopUpdate
 
   useEffect(() => {
-    gameLoop.start()
     return () => {
       gameLoop.stop()
     }
@@ -139,8 +143,8 @@ const Game = (props: Props) => {
   }, [gameId])
 
   useEffect(() => {
-    gameLoop[running ? 'start' : 'stop']()
-  }, [running])
+    gameLoop[isPaused ? 'stop' : 'start']()
+  }, [isPaused])
 
   useEffect(() => {
     const newInterval = 1000 / speed
@@ -148,12 +152,18 @@ const Game = (props: Props) => {
     gameLoop.interval = newInterval
   }, [speed, setInterval])
 
+  const popup = isStart
+    ? <Start />
+    : isGameOver
+      ? <GameOver score={score} />
+      : null
+
   return (
     <>
       <Board
         width={width}
         height={height}
-        popup={gameOver ? <GameOver score={score} /> : null}
+        popup={popup}
       >
         {uniqBy(snake, pointToString).map(p => (
           <Square

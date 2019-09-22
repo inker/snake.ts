@@ -22,8 +22,9 @@ const Score = styled.div`
 `
 
 interface Props {
-  paused: boolean,
-  gameOver: boolean,
+  isPaused: boolean,
+  isGameOver: boolean,
+  isStart: boolean,
   values: {
     width: number,
     height: number,
@@ -36,8 +37,9 @@ interface Props {
 }
 
 const Navbar = ({
-  paused,
-  gameOver,
+  isPaused,
+  isGameOver,
+  isStart,
   values,
   score,
   onTogglePause,
@@ -52,22 +54,24 @@ const Navbar = ({
     }
   }, [onSettingChange])
 
+  const gameStarted = !isGameOver && !isStart
+
   return (
     <Root>
       <Score>
         Score: {score}
       </Score>
       <Button
-        disabled={gameOver}
+        disabled={isGameOver || isStart}
         onClick={onTogglePause}
       >
-        {paused ? 'Resume' : 'Pause'}
+        {isPaused ? 'Resume' : 'Pause'}
       </Button>
       <Button onClick={onRestart}>
-        Restart
+        {isStart ? 'Start' : 'Restart'}
       </Button>
       <Slider
-        disabled={!paused}
+        disabled={gameStarted}
         value={values.width}
         min={config.size.min.width}
         max={config.size.max.width}
@@ -76,7 +80,7 @@ const Navbar = ({
         onChange={onChange}
       />
       <Slider
-        disabled={!paused}
+        disabled={gameStarted}
         value={values.height}
         min={config.size.min.height}
         max={config.size.max.height}
@@ -85,7 +89,7 @@ const Navbar = ({
         onChange={onChange}
       />
       <Slider
-        disabled={!paused}
+        disabled={!isPaused && gameStarted}
         value={values.speed}
         min={config.speed.min}
         max={config.speed.max}

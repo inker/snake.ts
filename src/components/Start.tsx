@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Root = styled.div`
@@ -19,20 +19,14 @@ const SmallText = styled.div`
   font-size: 20px;
 `
 
-interface Props {
-  score: number
-}
-
-const GameOver = ({
-  score,
-}: Props) => {
+const Start = () => {
   return (
     <Root>
-      <div>GAME OVER</div>
-      <div>Your score: {score}</div>
-      <SmallText>To restart the game, press Esc or click 'Restart'</SmallText>
+      <SmallText>
+        To start the game, press Esc or click 'Start'
+      </SmallText>
     </Root>
   )
 }
 
-export default memo(GameOver)
+export default Start

@@ -28,14 +28,16 @@ interface Settings {
 }
 
 interface State {
-  running: boolean,
-  gameOver: boolean,
+  isRunning: boolean,
+  isGameOver: boolean,
+  isStart: boolean,
 }
 
 const App = () => {
   const [state, setState] = useState<State>({
-    running: true,
-    gameOver: false,
+    isRunning: true,
+    isGameOver: false,
+    isStart: true,
   })
 
   const [settings, setSettings] = useKeyValue<Settings>({
@@ -49,21 +51,24 @@ const App = () => {
   const [score, setScore] = useState(0)
 
   const {
-    running,
-    gameOver,
+    isRunning,
+    isGameOver,
+    isStart,
   } = state
 
   const onTogglePause = useCallback(() => {
     setState({
-      running: !running,
-      gameOver: false,
+      isRunning: !isRunning,
+      isGameOver: false,
+      isStart: false,
     })
-  }, [running, setState])
+  }, [isRunning, setState])
 
   const onRestart = useCallback(() => {
     setState({
-      running: true,
-      gameOver: false,
+      isRunning: true,
+      isGameOver: false,
+      isStart: false,
     })
     setGameId(uniqueId('gameid-'))
     setScore(0)
@@ -71,8 +76,9 @@ const App = () => {
 
   const onGameOver = useCallback(() => {
     setState({
-      running: false,
-      gameOver: true,
+      isRunning: false,
+      isGameOver: true,
+      isStart: false,
     })
   }, [setState])
 
@@ -81,22 +87,23 @@ const App = () => {
     if (keyCode === 27) {
       // esc
       e.preventDefault()
-      if (gameOver) {
+      if (isGameOver || isStart) {
         onRestart()
       } else {
         onTogglePause()
       }
       e.stopPropagation()
     }
-  }, [gameOver, onRestart, onTogglePause])
+  }, [isGameOver, isStart, onRestart, onTogglePause])
 
   useEvent('keydown', onKeyDown)
 
   return (
     <Root>
       <NavBar
-        paused={!running}
-        gameOver={gameOver}
+        isPaused={!isRunning}
+        isGameOver={isGameOver}
+        isStart={isStart}
         values={settings}
         score={score}
         onRestart={onRestart}
@@ -105,13 +112,14 @@ const App = () => {
       />
       <Game
         gameId={gameId}
-        running={running}
+        isRunning={isRunning}
+        isGameOver={isGameOver}
+        isStart={isStart}
+        score={score}
         width={settings.width}
         height={settings.height}
         speed={settings.speed}
         initialLength={config.initialLength}
-        score={score}
-        gameOver={gameOver}
         onScoreChange={setScore}
         onGameOver={onGameOver}
       />
