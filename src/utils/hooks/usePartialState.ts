@@ -8,10 +8,9 @@ export default <State extends { [key: string]: any }>(
 ): [State, (patch: Partial<State> | ((prevState: State) => Partial<State>)) => void] => {
   const [state, setState] = useState<State>(initialState)
   const setStateNew = useCallback(patch => {
-    const newState = typeof patch === 'function' ? patch(prevState) : patch
     setState(prevState => ({
       ...prevState,
-      ...newState,
+      ...(typeof patch === 'function' ? patch(prevState) : patch),
     }))
   }, [setState])
 
