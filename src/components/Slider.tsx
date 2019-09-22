@@ -14,7 +14,6 @@ const Root = styled.div`
 const Label = styled.label`
   display: flex;
   flex-direction: column;
-  // @ts-ignore
   color: ${props => props.disabled ? '#999' : ''};
 `
 
@@ -24,7 +23,6 @@ const Input = styled.input`
 
 const Value = styled.div`
   width: 30px;
-  // @ts-ignore
   color: ${props => props.disabled ? '#999' : ''};
 `
 
@@ -44,20 +42,14 @@ const Slider = ({
 }: Props) => {
   return (
     <Root>
-      <Label
-        // @ts-ignore
-        disabled={props.disabled}
-      >
+      <Label disabled={props.disabled}>
         {capitalize(props['data-variable'])}
         <Input
           type="range"
           {...props}
         />
       </Label>
-      <Value
-        // @ts-ignore
-        disabled={props.disabled}
-      >
+      <Value disabled={props.disabled}>
         {value}
       </Value>
     </Root>

@@ -1,5 +1,6 @@
 import React, {
   useRef,
+  useState,
   useEffect,
   useCallback,
   memo,
@@ -30,29 +31,29 @@ const START_X = 2
 const pointToString = (p: Point) =>
   `${p.x},${p.y}`
 
-const makeInitialSnake = (props: Props) =>
-  range(START_X + props.initialLength, START_X).map(x => new Point(
-    x,
-    props.height >> 1,
-  ))
+function makeInitialSnake(initialLength: number, boardHeight: number) {
+  const y = random(0, boardHeight - 1)
+  return range(START_X + initialLength, START_X)
+    .map(x => new Point(x, y))
+}
 
-function makeFood(width: number, height: number, snake: Point[]) {
-  const food = new Point(random(0, width - 1), random(0, height - 1))
+function makeFood(boardWidth: number, boardHeight: number, snake: Point[]) {
+  const food = new Point(random(0, boardWidth - 1), random(0, boardHeight - 1))
   return snake.some(p => p.equals(food))
-    ? makeFood(width, height, snake)
+    ? makeFood(boardWidth, boardHeight, snake)
     : food
 }
 
 function getInitialState(props: Props): State {
   const interval = 1000 / props.speed
-  const snake = makeInitialSnake(props)
+  const snake = makeInitialSnake(props.initialLength, props.height)
+  const food = makeFood(props.width, props.height, snake)
 
   return {
     interval,
     snake,
-    direction: Direction.RIGHT,
     lastDirection: Direction.RIGHT,
-    food: makeFood(props.width, props.height, snake),
+    food,
     gameOver: false,
   }
 }
@@ -72,7 +73,6 @@ interface Props {
 interface State {
   interval: number,
   snake: Point[],
-  direction: Direction,
   lastDirection: Direction,
   food: Point | null,
   gameOver: boolean,
@@ -80,6 +80,7 @@ interface State {
 
 const Game = (props: Props) => {
   const [state, setState] = usePartialState<State>(getInitialState(props))
+  const [direction, setDirection] = useState<Direction>(Direction.RIGHT)
 
   const {
     gameId,
@@ -95,7 +96,6 @@ const Game = (props: Props) => {
   const {
     interval,
     snake,
-    direction,
     food,
     gameOver,
     lastDirection,
@@ -143,10 +143,8 @@ const Game = (props: Props) => {
     if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
       return
     }
-    setState({
-      direction: dir,
-    })
-  }, [running, lastDirection, setState])
+    setDirection(dir)
+  }, [running, lastDirection, setDirection])
 
   useEvent('keydown', onKeyDown)
 
@@ -158,6 +156,7 @@ const Game = (props: Props) => {
   }, [])
 
   const reset = () => {
+    setDirection(Direction.RIGHT)
     setState(getInitialState(props))
     gameLoop.start()
   }

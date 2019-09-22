@@ -23,15 +23,12 @@ function getDimensions(w: number, h: number) {
 }
 
 const Root = styled.div`
-  // @ts-ignore
   width: ${props => props.width ? `${props.width}px` : '100%'};
-  // @ts-ignore
   height: ${props => props.height ? `${props.height}px` : '100%'};
   border: 1px solid #999;
 `
 
 const Svg = styled.svg`
-  // @ts-ignore
   display: ${props => props.visible ? '' : 'none'};
 `
 
