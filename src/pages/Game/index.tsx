@@ -1,5 +1,4 @@
 import React, {
-  useRef,
   useState,
   useEffect,
   memo,
@@ -22,7 +21,7 @@ import offsetByDirection from 'utils/offsetByDirection'
 import useSnakeDirection from 'utils/hooks/useSnakeDirection'
 
 import Board from './Board'
-import GameLoop from './GameLoop'
+import useGameLoop from './useGameLoop'
 
 const START_X = 2
 
@@ -86,71 +85,52 @@ const Game = (props: Props) => {
   } = props
 
   const [state, setState] = useState<State>(getInitialState(props))
-  const [interval, setInterval] = useState(1000 / speed)
   const [direction, syncDirection, resetDirection] = useSnakeDirection(Direction.RIGHT)
-
-  const isPaused = !isRunning || isGameOver || isStart
 
   const {
     snake,
     food,
   } = state
 
-  const onLoopUpdate = () => {
-    syncDirection()
-
-    const oldHead = snake[0]
-    const offset = offsetByDirection(direction)
-    const newHead = oldHead.add(offset)
-
-    const eaten = food && newHead.equals(food)
-    const died = !eaten && snake.some(p => p.equals(newHead))
-      || newHead.x < 0
-      || newHead.y < 0
-      || newHead.x >= width
-      || newHead.y >= height
-
-    const newTail = eaten ? snake : initial(snake)
-    const newSnake = [newHead, ...newTail]
-
-    if (eaten) {
-      onScoreChange(score + 1)
-    }
-
-    if (died) {
-      onGameOver()
-    }
-
-    setState({
-      snake: newSnake,
-      food: eaten ? makeFood(width, height, newSnake) : food,
-    })
-  }
-
-  const { current: gameLoop } = useRef(new GameLoop(interval, onLoopUpdate))
-  gameLoop.onUpdate = onLoopUpdate
-
-  useEffect(() => {
-    return () => {
-      gameLoop.stop()
-    }
-  }, [])
-
   useEffect(() => {
     resetDirection()
     setState(getInitialState(props))
-    gameLoop.start()
   }, [gameId])
 
-  useEffect(() => {
-    gameLoop[isPaused ? 'stop' : 'start']()
-  }, [isPaused])
+  useGameLoop(
+    isRunning && !isGameOver && !isStart,
+    1000 / speed,
+    () => {
+      syncDirection()
 
-  useEffect(() => {
-    const newInterval = 1000 / speed
-    setInterval(newInterval)
-    gameLoop.interval = newInterval
-  }, [speed, setInterval])
+      const oldHead = snake[0]
+      const offset = offsetByDirection(direction)
+      const newHead = oldHead.add(offset)
+
+      const eaten = food && newHead.equals(food)
+      const died = !eaten && snake.some(p => p.equals(newHead))
+        || newHead.x < 0
+        || newHead.y < 0
+        || newHead.x >= width
+        || newHead.y >= height
+
+      const newTail = eaten ? snake : initial(snake)
+      const newSnake = [newHead, ...newTail]
+
+      if (eaten) {
+        onScoreChange(score + 1)
+      }
+
+      if (died) {
+        onGameOver()
+      }
+
+      setState({
+        snake: newSnake,
+        food: eaten ? makeFood(width, height, newSnake) : food,
+      })
+    },
+  )
 
   const popup = isStart
     ? <Start />
