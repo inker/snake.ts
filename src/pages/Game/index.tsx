@@ -1,8 +1,6 @@
 import React, {
   useRef,
-  useState,
   useEffect,
-  useCallback,
   memo,
 } from 'react'
 import {
@@ -17,11 +15,10 @@ import GameOver from 'components/GameOver'
 
 import Point from 'utils/Point'
 import Direction from 'utils/Direction'
-import directionByKeyCode from 'utils/directionByKeyCode'
-import directionsAreOpposite from 'utils/directionsAreOpposite'
 import offsetByDirection from 'utils/offsetByDirection'
+
 import usePartialState from 'utils/hooks/usePartialState'
-import useEvent from 'utils/hooks/useEvent'
+import useArrowKeys from 'utils/hooks/useArrowKeys'
 
 import Board from './Board'
 import GameLoop from './GameLoop'
@@ -52,7 +49,6 @@ function getInitialState(props: Props): State {
   return {
     interval,
     snake,
-    lastDirection: Direction.RIGHT,
     food,
     gameOver: false,
   }
@@ -73,14 +69,13 @@ interface Props {
 interface State {
   interval: number,
   snake: Point[],
-  lastDirection: Direction,
   food: Point | null,
   gameOver: boolean,
 }
 
 const Game = (props: Props) => {
   const [state, setState] = usePartialState<State>(getInitialState(props))
-  const [direction, setDirection] = useState<Direction>(Direction.RIGHT)
+  const [direction, setDirection, setLastDirection] = useArrowKeys(Direction.RIGHT)
 
   const {
     gameId,
@@ -98,7 +93,6 @@ const Game = (props: Props) => {
     snake,
     food,
     gameOver,
-    lastDirection,
   } = state
 
   const onLoopUpdate = () => {
@@ -124,29 +118,17 @@ const Game = (props: Props) => {
       onGameOver()
     }
 
+    setLastDirection(direction)
+
     setState({
       snake: newSnake,
       food: eaten ? makeFood(width, height, newSnake) : food,
-      lastDirection: direction,
       gameOver: died,
     })
   }
 
   const { current: gameLoop } = useRef(new GameLoop(interval, onLoopUpdate))
   gameLoop.onUpdate = onLoopUpdate
-
-  const onKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!running) {
-      return
-    }
-    const dir = directionByKeyCode(e.keyCode)
-    if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
-      return
-    }
-    setDirection(dir)
-  }, [running, lastDirection, setDirection])
-
-  useEvent('keydown', onKeyDown)
 
   useEffect(() => {
     gameLoop.start()
