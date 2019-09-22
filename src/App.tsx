@@ -1,4 +1,7 @@
-import React, { PureComponent } from 'react'
+import React, {
+  useCallback,
+  memo,
+} from 'react'
 import styled from 'styled-components'
 import { uniqueId } from 'lodash'
 
@@ -6,6 +9,8 @@ import config from './config.json'
 
 import Game from 'pages/Game'
 import NavBar from 'components/NavBar'
+import usePartialState from 'utils/hooks/usePartialState'
+import useEvent from 'utils/hooks/useEvent'
 
 // @ts-ignore
 import(/* webpackChunkName: "version" */ './version')
@@ -29,9 +34,9 @@ interface State {
   gameOver: boolean,
 }
 
-class App extends PureComponent<Props, State> {
-  state: State = {
-    gameId: uniqueId('key-'),
+const App = (props: Props) => {
+  const [state, setState] = usePartialState<State>({
+    gameId: uniqueId('gameid-'),
     values: {
       width: config.size.default.width,
       height: config.size.default.height,
@@ -40,95 +45,92 @@ class App extends PureComponent<Props, State> {
     score: 0,
     running: true,
     gameOver: false,
-  }
+  })
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown)
-  }
+  const {
+    gameId,
+    values,
+    score,
+    running,
+    gameOver,
+  } = state
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown)
-  }
-
-  onKeyDown = (e) => {
-    const { keyCode } = e
-    const { state } = this
-    if (keyCode === 32) {
-      // space
-      e.preventDefault()
-      if (state.gameOver) {
-        this.onRestart()
-      } else {
-        this.onTogglePause()
-      }
-      e.stopPropagation()
-    }
-  }
-
-  onTogglePause = () => {
-    this.setState({
-      running: !this.state.running,
+  const onTogglePause = useCallback(() => {
+    setState({
+      running: !running,
     })
-  }
+  }, [running, setState])
 
-  onRestart = () => {
-    this.setState({
+  const onRestart = useCallback(() => {
+    setState({
       gameId: uniqueId('gameid-'),
       running: true,
       gameOver: false,
       score: 0,
     })
-  }
+  }, [setState])
 
-  onGameOver = () => {
-    this.setState({
+  const onGameOver = useCallback(() => {
+    setState({
       running: false,
       gameOver: true,
     })
-  }
+  }, [setState])
 
-  onScoreChange = (score: number) => {
-    this.setState({
+  const onScoreChange = useCallback((score: number) => {
+    setState({
       score,
     })
-  }
+  }, [setState])
 
-  onSettingChange = (setting: any, value: number) => {
-    this.setState({
+  const onSettingChange = useCallback((setting: any, value: number) => {
+    setState({
       values: {
-        ...this.state.values,
+        ...values,
         [setting]: value,
       },
     })
-  }
+  }, [values, setState])
 
-  render() {
-    const { state } = this
-    const { values } = state
-    return (
-      <Root>
-        <NavBar
-          paused={!state.running}
-          gameOver={state.gameOver}
-          values={values}
-          score={state.score}
-          onRestart={this.onRestart}
-          onSettingChange={this.onSettingChange}
-          onTogglePause={this.onTogglePause}
-        />
-        <Game
-          gameId={state.gameId}
-          running={state.running}
-          width={values.width}
-          height={values.height}
-          speed={values.speed}
-          initialLength={config.initialLength}
-          onScoreChange={this.onScoreChange}
-          onGameOver={this.onGameOver}
-        />
-      </Root>
-    )
-  }
+  const onKeyDown = useCallback((e: KeyboardEvent) => {
+    const { keyCode } = e
+    if (keyCode === 32) {
+      // space
+      e.preventDefault()
+      if (gameOver) {
+        onRestart()
+      } else {
+        onTogglePause()
+      }
+      e.stopPropagation()
+    }
+  }, [gameOver, onRestart, onTogglePause])
+
+  useEvent('keydown', onKeyDown)
+
+  return (
+    <Root>
+      <NavBar
+        paused={!running}
+        gameOver={gameOver}
+        values={values}
+        score={score}
+        onRestart={onRestart}
+        onSettingChange={onSettingChange}
+        onTogglePause={onTogglePause}
+      />
+      <Game
+        gameId={gameId}
+        running={running}
+        width={values.width}
+        height={values.height}
+        speed={values.speed}
+        initialLength={config.initialLength}
+        onScoreChange={onScoreChange}
+        onGameOver={onGameOver}
+      />
+    </Root>
+  )
 }
 
-export default App
+export default memo(App)

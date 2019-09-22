@@ -35,32 +35,40 @@ interface Props {
   onSettingChange?: (setting: string, value: number) => void,
 }
 
-const Navbar = (props: Props) => {
+const Navbar = ({
+  paused,
+  gameOver,
+  values,
+  score,
+  onTogglePause,
+  onRestart,
+  onSettingChange,
+}: Props) => {
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target
     const { variable } = input.dataset
-    if (variable && props.onSettingChange) {
-      props.onSettingChange(variable, +input.value)
+    if (variable && onSettingChange) {
+      onSettingChange(variable, +input.value)
     }
-  }, [props.onSettingChange])
+  }, [onSettingChange])
 
   return (
     <Root>
       <Score>
-        Score: {props.score}
+        Score: {score}
       </Score>
       <Button
-        disabled={props.gameOver}
-        onClick={props.onTogglePause}
+        disabled={gameOver}
+        onClick={onTogglePause}
       >
-        {props.paused ? 'Resume' : 'Pause'}
+        {paused ? 'Resume' : 'Pause'}
       </Button>
-      <Button onClick={props.onRestart}>
+      <Button onClick={onRestart}>
         Restart
       </Button>
       <Slider
-        disabled={!props.paused}
-        value={props.values.width}
+        disabled={!paused}
+        value={values.width}
         min={config.size.min.width}
         max={config.size.max.width}
         defaultValue={config.size.default.width}
@@ -68,8 +76,8 @@ const Navbar = (props: Props) => {
         onChange={onChange}
       />
       <Slider
-        disabled={!props.paused}
-        value={props.values.height}
+        disabled={!paused}
+        value={values.height}
         min={config.size.min.height}
         max={config.size.max.height}
         defaultValue={config.size.default.height}
@@ -77,8 +85,8 @@ const Navbar = (props: Props) => {
         onChange={onChange}
       />
       <Slider
-        disabled={!props.paused}
-        value={props.values.speed}
+        disabled={!paused}
+        value={values.speed}
         min={config.speed.min}
         max={config.speed.max}
         defaultValue={config.speed.default}

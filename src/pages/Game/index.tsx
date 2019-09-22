@@ -1,4 +1,9 @@
-import React, { PureComponent } from 'react'
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  memo,
+} from 'react'
 import {
   initial,
   range,
@@ -13,6 +18,8 @@ import Direction from 'utils/Direction'
 import directionByKeyCode from 'utils/directionByKeyCode'
 import directionsAreOpposite from 'utils/directionsAreOpposite'
 import offsetByDirection from 'utils/offsetByDirection'
+import usePartialState from 'utils/hooks/usePartialState'
+import useEvent from 'utils/hooks/useEvent'
 
 import Board from './Board'
 import GameLoop from './GameLoop'
@@ -68,79 +75,30 @@ interface State {
   gameOver: boolean,
 }
 
-class Game extends PureComponent<Props, State> {
-  private gameLoop: GameLoop
+const Game = (props: Props) => {
+  const [state, setState] = usePartialState<State>(getInitialState(props))
 
-  constructor(props: Props) {
-    super(props)
-    this.state = getInitialState(props)
-    this.gameLoop = new GameLoop(this.state.interval, this.onLoopUpdate)
-  }
+  const {
+    gameId,
+    running,
+    width,
+    height,
+    speed,
+    onScoreChange,
+    onGameOver,
+  } = props
 
-  componentDidMount() {
-    this.gameLoop.start()
-    window.addEventListener('keydown', this.onKeyDown)
-  }
+  const {
+    interval,
+    snake,
+    direction,
+    food,
+    gameOver,
+    lastDirection,
+    score,
+  } = state
 
-  componentDidUpdate(prevProps: Props) {
-    const { props } = this
-
-    if (props.gameId !== prevProps.gameId) {
-      this.reset()
-    }
-
-    if (props.running !== prevProps.running) {
-      this.gameLoop[props.running ? 'start' : 'stop']()
-    }
-
-    if (props.speed !== prevProps.speed) {
-      const interval = 1000 / props.speed
-      this.setState({
-        interval,
-      })
-      this.gameLoop.interval = interval
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown)
-    this.gameLoop.stop()
-  }
-
-  private reset() {
-    this.setState(getInitialState(this.props))
-    this.gameLoop.start()
-  }
-
-  private onKeyDown = (e: KeyboardEvent) => {
-    if (!this.props.running) {
-      return
-    }
-    const { lastDirection } = this.state
-    const dir = directionByKeyCode(e.keyCode)
-    if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
-      return
-    }
-    this.setState({
-      direction: dir,
-    })
-  }
-
-  private onLoopUpdate = () => {
-    const {
-      width,
-      height,
-      onScoreChange,
-      onGameOver,
-    } = this.props
-
-    const {
-      snake,
-      direction,
-      food,
-      score,
-    } = this.state
-
+  const onLoopUpdate = () => {
     const oldHead = snake[0]
     const offset = offsetByDirection(direction)
     const newHead = oldHead.add(offset)
@@ -163,7 +121,7 @@ class Game extends PureComponent<Props, State> {
       onGameOver()
     }
 
-    this.setState({
+    setState({
       snake: newSnake,
       food: eaten ? makeFood(width, height, newSnake) : food,
       lastDirection: direction,
@@ -172,43 +130,75 @@ class Game extends PureComponent<Props, State> {
     })
   }
 
-  render() {
-    const {
-      width,
-      height,
-    } = this.props
+  const { current: gameLoop } = useRef(new GameLoop(interval, onLoopUpdate))
+  gameLoop.onUpdate = onLoopUpdate
 
-    const {
-      snake,
-      food,
-      gameOver,
-      score,
-    } = this.state
+  const onKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!running) {
+      return
+    }
+    const dir = directionByKeyCode(e.keyCode)
+    if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
+      return
+    }
+    setState({
+      direction: dir,
+    })
+  }, [running, lastDirection, setState])
 
-    return (
-      <>
-        <Board
-          width={width}
-          height={height}
-          popup={gameOver ? <GameOver score={score} /> : null}
-        >
-          {snake.map(p => (
-            <Square
-              key={`${p.x},${p.y}`}
-              coordinates={p}
-              fill="blue"
-            />
-          ))}
-          {food && (
-            <Square
-              coordinates={food}
-              fill="red"
-            />
-          )}
-        </Board>
-      </>
-    )
+  useEvent('keydown', onKeyDown)
+
+  useEffect(() => {
+    gameLoop.start()
+    return () => {
+      gameLoop.stop()
+    }
+  }, [])
+
+  const reset = () => {
+    setState(getInitialState(props))
+    gameLoop.start()
   }
+
+  useEffect(() => {
+    reset()
+  }, [gameId])
+
+  useEffect(() => {
+    gameLoop[running ? 'start' : 'stop']()
+  }, [running])
+
+  useEffect(() => {
+    const newInterval = 1000 / props.speed
+    setState({
+      interval: newInterval,
+    })
+    gameLoop.interval = newInterval
+  }, [speed])
+
+  return (
+    <>
+      <Board
+        width={width}
+        height={height}
+        popup={gameOver ? <GameOver score={score} /> : null}
+      >
+        {snake.map(p => (
+          <Square
+            key={`${p.x},${p.y}`}
+            coordinates={p}
+            fill="blue"
+          />
+        ))}
+        {food && (
+          <Square
+            coordinates={food}
+            fill="red"
+          />
+        )}
+      </Board>
+    </>
+  )
 }
 
-export default Game
+export default memo(Game)
