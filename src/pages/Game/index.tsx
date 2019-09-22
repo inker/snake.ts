@@ -8,6 +8,7 @@ import {
   initial,
   range,
   random,
+  uniqBy,
 } from 'lodash'
 
 import Square from 'components/Square'
@@ -25,6 +26,9 @@ import Board from './Board'
 import GameLoop from './GameLoop'
 
 const START_X = 2
+
+const pointToString = (p: Point) =>
+  `${p.x},${p.y}`
 
 const makeInitialSnake = (props: Props) =>
   range(START_X + props.initialLength, START_X).map(x => new Point(
@@ -181,9 +185,9 @@ const Game = (props: Props) => {
         height={height}
         popup={gameOver ? <GameOver score={score} /> : null}
       >
-        {snake.map(p => (
+        {uniqBy(snake, pointToString).map(p => (
           <Square
-            key={`${p.x},${p.y}`}
+            key={pointToString(p)}
             coordinates={p}
             fill="blue"
           />
