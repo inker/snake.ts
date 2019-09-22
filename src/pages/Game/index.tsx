@@ -149,10 +149,10 @@ const Game = (props: Props) => {
   }, [running])
 
   useEffect(() => {
-    const newInterval = 1000 / props.speed
+    const newInterval = 1000 / speed
     setInterval(newInterval)
     gameLoop.interval = newInterval
-  }, [speed])
+  }, [speed, setInterval])
 
   return (
     <>
