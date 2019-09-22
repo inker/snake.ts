@@ -97,6 +97,8 @@ const Game = (props: Props) => {
   } = state
 
   const onLoopUpdate = () => {
+    syncDirection()
+
     const oldHead = snake[0]
     const offset = offsetByDirection(direction)
     const newHead = oldHead.add(offset)
@@ -110,16 +112,14 @@ const Game = (props: Props) => {
 
     const newTail = eaten ? snake : initial(snake)
     const newSnake = [newHead, ...newTail]
-    const newScore = eaten ? score + 1 : score
 
-    if (eaten && onScoreChange) {
-      onScoreChange(newScore)
+    if (eaten) {
+      onScoreChange(score + 1)
     }
-    if (died && onGameOver) {
+
+    if (died) {
       onGameOver()
     }
-
-    syncDirection()
 
     setState({
       snake: newSnake,
