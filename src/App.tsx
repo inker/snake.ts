@@ -111,6 +111,7 @@ const App = () => {
         speed={settings.speed}
         initialLength={config.initialLength}
         score={score}
+        gameOver={gameOver}
         onScoreChange={setScore}
         onGameOver={onGameOver}
       />

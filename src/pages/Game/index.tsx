@@ -48,26 +48,25 @@ function getInitialState(props: Props): State {
   return {
     snake,
     food,
-    gameOver: false,
   }
 }
 
 interface Props {
   gameId: string,
   running: boolean,
+  score: number,
+  gameOver: boolean,
   width: number,
   height: number,
   speed: number,
   initialLength: number,
-  score: number,
-  onScoreChange?: (score: number) => void,
-  onGameOver?: () => void,
+  onScoreChange: (score: number) => void,
+  onGameOver: () => void,
 }
 
 interface State {
   snake: Point[],
   food: Point | null,
-  gameOver: boolean,
 }
 
 const Game = (props: Props) => {
@@ -78,6 +77,7 @@ const Game = (props: Props) => {
     height,
     speed,
     score,
+    gameOver,
     onScoreChange,
     onGameOver,
   } = props
@@ -89,7 +89,6 @@ const Game = (props: Props) => {
   const {
     snake,
     food,
-    gameOver,
   } = state
 
   const onLoopUpdate = () => {
@@ -120,7 +119,6 @@ const Game = (props: Props) => {
     setState({
       snake: newSnake,
       food: eaten ? makeFood(width, height, newSnake) : food,
-      gameOver: died,
     })
   }
 
