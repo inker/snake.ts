@@ -18,7 +18,7 @@ import Point from 'utils/Point'
 import Direction from 'utils/Direction'
 import offsetByDirection from 'utils/offsetByDirection'
 
-import useArrowKeys from 'utils/hooks/useArrowKeys'
+import useSnakeDirection from 'utils/hooks/useSnakeDirection'
 
 import Board from './Board'
 import GameLoop from './GameLoop'
@@ -84,7 +84,7 @@ const Game = (props: Props) => {
 
   const [state, setState] = useState<State>(getInitialState(props))
   const [interval, setInterval] = useState(1000 / speed)
-  const [direction, setDirection, setLastDirection] = useArrowKeys(Direction.RIGHT)
+  const [direction, syncDirection, resetDirection] = useSnakeDirection(Direction.RIGHT)
 
   const {
     snake,
@@ -115,7 +115,7 @@ const Game = (props: Props) => {
       onGameOver()
     }
 
-    setLastDirection(direction)
+    syncDirection()
 
     setState({
       snake: newSnake,
@@ -134,14 +134,10 @@ const Game = (props: Props) => {
     }
   }, [])
 
-  const reset = () => {
-    setDirection(Direction.RIGHT)
+  useEffect(() => {
+    resetDirection()
     setState(getInitialState(props))
     gameLoop.start()
-  }
-
-  useEffect(() => {
-    reset()
   }, [gameId])
 
   useEffect(() => {

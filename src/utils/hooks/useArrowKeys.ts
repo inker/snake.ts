@@ -6,21 +6,24 @@ import {
 import Direction from 'utils/Direction'
 
 import directionByKeyCode from 'utils/directionByKeyCode'
-import directionsAreOpposite from 'utils/directionsAreOpposite'
 import useEvent from './useEvent'
 
-export default (initialDirection: Direction) => {
-  const [direction, setDirection] = useState<Direction>(initialDirection)
-  const [lastDirection, setLastDirection] = useState<Direction>(initialDirection)
+export default () => {
+  const [direction, setDirection] = useState<Direction>(-1)
+
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     const dir = directionByKeyCode(e.keyCode)
-    if (dir < 0 || dir === lastDirection || directionsAreOpposite(lastDirection, dir)) {
+    if (dir < 0) {
       return
     }
     setDirection(dir)
-  }, [lastDirection, setDirection])
+  }, [setDirection])
 
   useEvent('keydown', onKeyDown)
 
-  return [direction, setDirection, setLastDirection] as const
+  const reset = useCallback(() => {
+    setDirection(-1)
+  }, [setDirection])
+
+  return [direction, reset] as const
 }
