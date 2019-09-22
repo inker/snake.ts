@@ -94,8 +94,8 @@ const App = (props: Props) => {
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     const { keyCode } = e
-    if (keyCode === 32) {
-      // space
+    if (keyCode === 27) {
+      // esc
       e.preventDefault()
       if (gameOver) {
         onRestart()
