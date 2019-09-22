@@ -126,6 +126,7 @@ const App = (props: Props) => {
         height={values.height}
         speed={values.speed}
         initialLength={config.initialLength}
+        score={score}
         onScoreChange={onScoreChange}
         onGameOver={onGameOver}
       />
