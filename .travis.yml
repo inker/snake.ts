@@ -10,6 +10,6 @@ deploy:
   local_dir: docs
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  fqdn: https://snake.inker.fun
+  fqdn: https://snake.inker.one
   on:
     branch: master
