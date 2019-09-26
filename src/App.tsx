@@ -11,7 +11,8 @@ import Game from 'pages/Game'
 import NavBar from 'components/NavBar'
 
 import useEvent from 'utils/hooks/useEvent'
-import useKeyValue from 'utils/hooks/useKeyValue'
+import useSetKey from 'utils/hooks/useSetKey'
+import useLocalStorage from 'utils/hooks/useLocalStorage'
 
 // @ts-ignore
 import(/* webpackChunkName: "version" */ './version')
@@ -21,10 +22,10 @@ const Root = styled.div`
   font-family: Tahoma, Arial, sans-serif;
 `
 
-interface Settings {
-  width: number,
-  height: number,
-  speed: number,
+const defaultSettings = {
+  width: config.size.default.width,
+  height: config.size.default.height,
+  speed: config.speed.default,
 }
 
 interface State {
@@ -40,11 +41,13 @@ const App = () => {
     isStart: true,
   })
 
-  const [settings, setSettings] = useKeyValue<Settings>({
-    width: config.size.default.width,
-    height: config.size.default.height,
-    speed: config.speed.default,
-  })
+  const [settings, setSettings] = useLocalStorage('settings', defaultSettings)
+
+  const setSetting = useSetKey(setSettings)
+
+  const resetSettings = useCallback(() => {
+    setSettings(defaultSettings)
+  }, [setSettings])
 
   const [gameId, setGameId] = useState(uniqueId('gameid-'))
 
@@ -107,7 +110,8 @@ const App = () => {
         values={settings}
         score={score}
         onRestart={onRestart}
-        onSettingChange={setSettings}
+        onSettingChange={setSetting}
+        onResetSettings={resetSettings}
         onTogglePause={onTogglePause}
       />
       <Game

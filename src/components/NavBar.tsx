@@ -34,6 +34,7 @@ interface Props {
   onTogglePause?: () => void,
   onRestart?: () => void,
   onSettingChange?: (setting: string, value: number) => void,
+  onResetSettings?: () => void,
 }
 
 const Navbar = ({
@@ -45,6 +46,7 @@ const Navbar = ({
   onTogglePause,
   onRestart,
   onSettingChange,
+  onResetSettings,
 }: Props) => {
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target
@@ -75,7 +77,7 @@ const Navbar = ({
         value={values.width}
         min={config.size.min.width}
         max={config.size.max.width}
-        defaultValue={config.size.default.width}
+        defaultValue={values.width}
         data-variable="width"
         onChange={onChange}
       />
@@ -84,7 +86,7 @@ const Navbar = ({
         value={values.height}
         min={config.size.min.height}
         max={config.size.max.height}
-        defaultValue={config.size.default.height}
+        defaultValue={values.height}
         data-variable="height"
         onChange={onChange}
       />
@@ -93,10 +95,16 @@ const Navbar = ({
         value={values.speed}
         min={config.speed.min}
         max={config.speed.max}
-        defaultValue={config.speed.default}
+        defaultValue={values.speed}
         data-variable="speed"
         onChange={onChange}
       />
+      <Button
+        disabled={gameStarted}
+        onClick={onResetSettings}
+      >
+        Reset settings
+      </Button>
     </Root>
   )
 }

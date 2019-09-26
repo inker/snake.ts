@@ -46,6 +46,7 @@ const Slider = ({
         {capitalize(props['data-variable'])}
         <Input
           type="range"
+          value={value}
           {...props}
         />
       </Label>
