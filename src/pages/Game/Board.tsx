@@ -2,7 +2,8 @@ import React, {
   FC,
   memo,
 } from 'react'
-import styled from 'styled-components'
+
+import styled, { css } from 'styled-components'
 
 import Grid from 'components/Grid'
 
@@ -23,6 +24,11 @@ const Root = styled.div`
   width: ${props => props.width ? `${props.width}px` : '100%'};
   height: ${props => props.height ? `${props.height}px` : '100%'};
   border: 1px solid #999;
+
+  ${props => props.paused && css`
+    opacity: 0.25;
+    transition: opacity 0.2s;
+  `}
 `
 
 const Svg = styled.svg`
@@ -32,12 +38,14 @@ const Svg = styled.svg`
 interface Props {
   width: number,
   height: number,
+  paused: boolean,
   popup?: React.ReactElement<any> | null,
 }
 
 const Board: FC<Props> = ({
   width,
   height,
+  paused,
   popup,
   children,
 }) => {
@@ -47,6 +55,7 @@ const Board: FC<Props> = ({
     <Root
       width={svgDimensions.width}
       height={svgDimensions.height}
+      paused={paused}
     >
       <Svg
         xmlns="http://www.w3.org/2000/svg"

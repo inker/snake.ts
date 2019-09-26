@@ -3,6 +3,7 @@ import React, {
   useEffect,
   memo,
 } from 'react'
+
 import {
   initial,
   range,
@@ -143,27 +144,26 @@ const Game = ({
       : null
 
   return (
-    <>
-      <Board
-        width={width}
-        height={height}
-        popup={popup}
-      >
-        {uniqBy(snake, pointToString).map(p => (
-          <Square
-            key={pointToString(p)}
-            coordinates={p}
-            fill="blue"
-          />
-        ))}
-        {food && (
-          <Square
-            coordinates={food}
-            fill="red"
-          />
-        )}
-      </Board>
-    </>
+    <Board
+      width={width}
+      height={height}
+      paused={!isRunning && !isGameOver}
+      popup={popup}
+    >
+      {uniqBy(snake, pointToString).map(p => (
+        <Square
+          key={pointToString(p)}
+          coordinates={p}
+          fill="blue"
+        />
+      ))}
+      {food && (
+        <Square
+          coordinates={food}
+          fill="red"
+        />
+      )}
+    </Board>
   )
 }
 
