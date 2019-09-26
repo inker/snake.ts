@@ -16,9 +16,9 @@ export default <T>(key: string, initialValue: T) => {
       return item
         ? JSON.parse(item)
         : initialValue
-    } catch (error) {
+    } catch (err) {
       // If error also return initialValue
-      console.error(error)
+      console.error(err)
       return initialValue
     }
   })
@@ -35,11 +35,20 @@ export default <T>(key: string, initialValue: T) => {
       setStoredValue(valueToStore)
       // Save to local storage
       window.localStorage.setItem(key, JSON.stringify(valueToStore))
-    } catch (error) {
+    } catch (err) {
       // A more advanced implementation would handle the error case
-      console.error(error)
+      console.error(err)
     }
   }, [setStoredValue])
 
-  return [storedValue, setValue] as const
+  const reset = useCallback(() => {
+    setStoredValue(initialValue)
+    try {
+      window.localStorage.removeItem(key)
+    } catch (err) {
+      console.error(err)
+    }
+  }, [setStoredValue])
+
+  return [storedValue, setValue, reset] as const
 }

@@ -41,13 +41,9 @@ const App = () => {
     isStart: true,
   })
 
-  const [settings, setSettings] = useLocalStorage('settings', defaultSettings)
+  const [settings, setSettings, resetSettings] = useLocalStorage('settings', defaultSettings)
 
   const setSetting = useSetKey(setSettings)
-
-  const resetSettings = useCallback(() => {
-    setSettings(defaultSettings)
-  }, [setSettings])
 
   const [gameId, setGameId] = useState(uniqueId('gameid-'))
 
