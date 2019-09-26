@@ -41,9 +41,13 @@ function makeFood(boardWidth: number, boardHeight: number, snake: Point[]) {
     : food
 }
 
-function getInitialState(props: Props): State {
-  const snake = makeInitialSnake(props.initialLength, props.height)
-  const food = makeFood(props.width, props.height, snake)
+function getInitialState(
+  boardWith: number,
+  boardHeight: number,
+  initialSnakeLength: number,
+): State {
+  const snake = makeInitialSnake(initialSnakeLength, boardHeight)
+  const food = makeFood(boardWith, boardHeight, snake)
 
   return {
     snake,
@@ -70,21 +74,22 @@ interface State {
   food: Point | null,
 }
 
-const Game = (props: Props) => {
-  const {
-    gameId,
-    isRunning,
-    width,
-    height,
-    speed,
-    score,
-    isGameOver,
-    isStart,
-    onScoreChange,
-    onGameOver,
-  } = props
+const Game = ({
+  gameId,
+  isRunning,
+  width,
+  height,
+  speed,
+  score,
+  isGameOver,
+  isStart,
+  initialLength,
+  onScoreChange,
+  onGameOver,
+}: Props) => {
+  const initialState = getInitialState(width, height, initialLength)
 
-  const [state, setState] = useState<State>(getInitialState(props))
+  const [state, setState] = useState<State>(initialState)
   const [direction, syncDirection, resetDirection] = useSnakeDirection(Direction.RIGHT)
 
   const {
@@ -94,7 +99,7 @@ const Game = (props: Props) => {
 
   useEffect(() => {
     resetDirection()
-    setState(getInitialState(props))
+    setState(initialState)
   }, [gameId])
 
   useGameLoop(
