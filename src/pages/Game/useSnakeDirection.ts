@@ -6,7 +6,7 @@ import {
 import Direction from 'utils/Direction'
 import directionsAreOpposite from 'utils/directionsAreOpposite'
 
-import useArrowKeys from './useArrowKeys'
+import useArrowKeys from 'utils/hooks/useArrowKeys'
 
 export default (initialDirection: Direction) => {
   const [proposedDir, reset] = useArrowKeys()

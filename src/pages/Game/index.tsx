@@ -18,10 +18,9 @@ import Point from 'utils/Point'
 import Direction from 'utils/Direction'
 import offsetByDirection from 'utils/offsetByDirection'
 
-import useSnakeDirection from 'utils/hooks/useSnakeDirection'
-
 import Board from './Board'
 import useGameLoop from './useGameLoop'
+import useSnakeDirection from './useSnakeDirection'
 
 const START_X = 2
 
