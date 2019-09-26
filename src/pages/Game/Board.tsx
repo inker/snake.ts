@@ -1,7 +1,5 @@
 import React, {
   FC,
-  useState,
-  useEffect,
   memo,
 } from 'react'
 import styled from 'styled-components'
@@ -15,10 +13,9 @@ function getDimensions(w: number, h: number) {
   const rX = MAX_SVG_WIDTH / w
   const rY = MAX_SVG_HEIGHT / h
   const min = Math.min(rX, rY)
-  const [width, height] = [w, h].map(i => i * min)
   return {
-    width,
-    height,
+    width: w * min,
+    height: h * min,
   }
 }
 
@@ -38,22 +35,13 @@ interface Props {
   popup?: React.ReactElement<any> | null,
 }
 
-interface Dimensions {
-  width: number,
-  height: number,
-}
-
 const Board: FC<Props> = ({
   width,
   height,
   popup,
   children,
 }) => {
-  const [svgDimensions, setSvgDimensions] = useState<Dimensions>(getDimensions(width, height))
-
-  useEffect(() => {
-    setSvgDimensions(getDimensions(width, height))
-  }, [width, height])
+  const svgDimensions = getDimensions(width, height)
 
   return (
     <Root
