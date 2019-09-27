@@ -91,6 +91,10 @@ const App = () => {
   useKeyDownUp(onKeyUp)
 
   const onKeyDown = useCallback((e: KeyboardEvent) => {
+    if (isStart) {
+      return
+    }
+
     const { keyCode } = e
     if (keyCode === 27) {
       // esc
