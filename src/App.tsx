@@ -11,6 +11,7 @@ import Game from 'pages/Game'
 import NavBar from 'components/NavBar'
 
 import useEvent from 'utils/hooks/useEvent'
+import useKeyDownUp from 'utils/hooks/useKeyDownUp'
 import useSetKey from 'utils/hooks/useSetKey'
 import useLocalStorage from 'utils/hooks/useLocalStorage'
 
@@ -81,12 +82,20 @@ const App = () => {
     })
   }, [setState])
 
+  const onKeyUp = useCallback(() => {
+    if (isStart) {
+      onRestart()
+    }
+  }, [isStart, onRestart])
+
+  useKeyDownUp(onKeyUp)
+
   const onKeyDown = useCallback((e: KeyboardEvent) => {
     const { keyCode } = e
     if (keyCode === 27) {
       // esc
       e.preventDefault()
-      if (isGameOver || isStart) {
+      if (isGameOver) {
         onRestart()
       } else {
         onTogglePause()

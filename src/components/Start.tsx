@@ -23,7 +23,7 @@ const Start = () => {
   return (
     <Root>
       <SmallText>
-        To start the game, press Esc or click 'Start'
+        To start the game, press any key or click 'Start'
       </SmallText>
     </Root>
   )
