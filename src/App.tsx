@@ -12,7 +12,7 @@ import NavBar from 'components/NavBar'
 
 import useEvent from 'utils/hooks/useEvent'
 import useKeyDownUp from 'utils/hooks/useKeyDownUp'
-import useSetKey from 'utils/hooks/useSetKey'
+import useDictSet from 'utils/hooks/useDictSet'
 import useLocalStorage from 'utils/hooks/useLocalStorage'
 
 // @ts-ignore
@@ -44,7 +44,7 @@ const App = () => {
 
   const [settings, setSettings, resetSettings] = useLocalStorage('settings', defaultSettings)
 
-  const setSetting = useSetKey(setSettings)
+  const setSetting = useDictSet(setSettings)
 
   const [gameId, setGameId] = useState(uniqueId('gameid-'))
 
