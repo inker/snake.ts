@@ -1,10 +1,12 @@
-import React, { memo } from 'react'
+import React, {
+  memo,
+  SVGProps,
+} from 'react'
 
 import Point from 'utils/Point'
 
-interface Props {
+interface Props extends SVGProps<SVGRectElement> {
   coordinates: Point,
-  [prop: string]: any,
 }
 
 const Square = ({
