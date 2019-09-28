@@ -7,8 +7,8 @@
     "delay.js": "^1.0.2",
     "fast-delete": "^1.0.1",
     "lodash": "^4.17.15",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
     "styled-components": "^4.3.2",
     "tslib": "^1.10.0"
   },
