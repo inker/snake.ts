@@ -2,6 +2,9 @@ import React, { memo } from 'react'
 import styled from 'styled-components'
 import { capitalize } from 'lodash'
 
+import Label from './Label'
+import Value from './Value'
+
 const Root = styled.div`
   display: flex;
   align-items: center;
@@ -11,19 +14,8 @@ const Root = styled.div`
   margin: 10px;
 `
 
-const Label = styled.label`
-  display: flex;
-  flex-direction: column;
-  color: ${props => props.disabled ? '#999' : ''};
-`
-
 const Input = styled.input`
   width: 150px;
-`
-
-const Value = styled.div`
-  width: 30px;
-  color: ${props => props.disabled ? '#999' : ''};
 `
 
 interface Props {
@@ -38,6 +30,7 @@ interface Props {
 
 const Slider = ({
   value,
+  defaultValue,
   ...props
 }: Props) => {
   return (
@@ -47,6 +40,7 @@ const Slider = ({
         <Input
           type="range"
           value={value}
+          defaultValue={defaultValue.toString()}
           {...props}
         />
       </Label>

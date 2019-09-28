@@ -3,9 +3,10 @@ import React, {
   memo,
 } from 'react'
 
-import styled, { css } from 'styled-components'
-
 import Grid from 'components/Grid'
+
+import Root from './Root'
+import Svg from './Svg'
 
 const MAX_SVG_WIDTH = 700
 const MAX_SVG_HEIGHT = 500
@@ -19,21 +20,6 @@ function getDimensions(w: number, h: number) {
     height: h * min,
   }
 }
-
-const Root = styled.div`
-  width: ${props => props.width ? `${props.width}px` : '100%'};
-  height: ${props => props.height ? `${props.height}px` : '100%'};
-  border: 1px solid #999;
-
-  ${props => props.paused && css`
-    opacity: 0.25;
-    transition: opacity 0.2s;
-  `}
-`
-
-const Svg = styled.svg`
-  display: ${props => props.visible ? '' : 'none'};
-`
 
 interface Props {
   width: number,
