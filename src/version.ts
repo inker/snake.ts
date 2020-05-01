@@ -1,5 +1,5 @@
 const meta = document.createElement('meta')
-meta.name = 'version'
+meta.name = 'modification_date'
 // @ts-ignore
-meta.content = __VERSION__
+meta.content = __MODIFICATION_DATE__
 document.head.appendChild(meta)
