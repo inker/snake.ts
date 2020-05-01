@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "ES2019",
     "module": "esnext",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    // "resolveJsonModule": true,
     "baseUrl": "./src",
     // "sourceMap": true, // not needed when assembled with webpack
     // "watch": true, // not needed when assembled with webpack
     "pretty": true,
+    "alwaysStrict": true,
+    "strictBindCallApply": true,
     "experimentalDecorators": true,
     "jsx": "react",
     "strictNullChecks": true,
@@ -18,10 +21,10 @@
     "noEmitHelpers": true,
     "importHelpers": true,
     "lib": [
-      "es2017",
-      "dom",
-      "dom.iterable",
-      "webworker"
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "WebWorker"
     ]
   },
   "awesomeTypescriptLoaderOptions": {

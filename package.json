@@ -1,42 +1,8 @@
 {
   "name": "snake",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A snake game written in TypeScript",
   "main": "index.html",
-  "dependencies": {
-    "delay.js": "^1.0.2",
-    "fast-delete": "^1.0.1",
-    "lodash": "^4.17.15",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
-    "styled-components": "^4.3.2",
-    "tslib": "^1.10.0"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.138",
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "@types/styled-components": "^4.1.19",
-    "awesome-typescript-loader": "^5.2.1",
-    "html-webpack-plugin": "^3.2.0",
-    "rimraf": "^3.0.0",
-    "tslint": "^5.20.0",
-    "tslint-react": "^4.1.0",
-    "typescript": "^3.6.3",
-    "typescript-plugin-lodash": "^0.1.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.40.2",
-    "webpack-bundle-analyzer": "^3.5.1",
-    "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.1"
-  },
-  "scripts": {
-    "clean": "rimraf docs",
-    "build:prod": "webpack --colors --config webpack/webpack.config.js --env=prod",
-    "build:analyze": "npm run clean && webpack --colors --config webpack/webpack.config.js --env=analyze",
-    "start": "npm run clean && webpack-dev-server --colors --watch --config webpack/webpack.config.js --env=dev",
-    "test": "echo \"no test\""
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inker/snake.ts.git"
@@ -51,5 +17,39 @@
   "bugs": {
     "url": "https://github.com/inker/snake.ts/issues"
   },
-  "homepage": "https://github.com/inker/snake.ts#readme"
+  "homepage": "https://github.com/inker/snake.ts#readme",
+  "scripts": {
+    "lint:js": "eslint --ext .ts,.tsx --max-warnings=0 src",
+    "lint:css": "stylelint './src/**/*.ts'",
+    "build": "webpack --colors --config webpack/webpack.config.js",
+    "start": "webpack-dev-server --colors --watch --env.dev --config webpack/webpack.config.js",
+    "test": "echo \"No test\""
+  },
+  "dependencies": {
+    "delay.js": "^2.0.0",
+    "fast-delete": "^1.0.1",
+    "lodash": "^4.17.15",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "styled-components": "^5.1.0",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.138",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "@types/styled-components": "^5.1.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.3.0",
+    "tslint": "^6.1.2",
+    "tslint-react": "^5.0.0",
+    "typescript": "^3.6.3",
+    "typescript-plugin-lodash": "^0.1.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.40.2",
+    "webpack-bundle-analyzer": "^3.5.1",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
+  }
 }

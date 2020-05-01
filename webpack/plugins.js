@@ -1,55 +1,32 @@
-const path = require('path')
+const webpack = require('webpack')
 
-const {
-  DefinePlugin,
-  HotModuleReplacementPlugin,
-  optimize: {
-    OccurrenceOrderPlugin,
-  },
-  NamedChunksPlugin,
-  NamedModulesPlugin,
-  HashedModuleIdsPlugin,
-} = require('webpack')
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
+const { compact } = require('lodash')
+
 const getCurrentDate = require('./utils/getCurrentDate')
 const getLastCommitHash = require('./utils/getLastCommitHash')
-
-const SEP_RE = new RegExp(`\\${path.sep}`, 'g')
-const IS_REACT = /node_modules.+?(react|styled)/
-const PAGES_RE = /pages[\/\\](.+?)(index)?\.[jt]sx?/
+const chunkToName = require('./utils/chunkToName')
 
 const currentDate = getCurrentDate()
 const lastCommitHash = getLastCommitHash()
 
-const moduleToFileNames = (module) => {
-  if (!module.request || !module.optional) {
-    return null
-  }
-  const relativePath = path.relative(module.context, module.request)
-  const tokens = relativePath.match(PAGES_RE)
-  return tokens && tokens[1].replace(SEP_RE, '.').slice(0, -1)
-}
+module.exports = (isDev) => compact([
+  new CleanWebpackPlugin(),
 
-const chunkToName = (chunk) =>
-  chunk.name
-  || Array.from(chunk.modulesIterable, moduleToFileNames).find((name) => name)
-  || null
-
-module.exports = env => [
-  new DefinePlugin({
+  new webpack.DefinePlugin({
     'process.env': {
-      NODE_ENV: JSON.stringify(env === 'dev' ? 'development' : 'production'),
+      NODE_ENV: JSON.stringify(isDev ? 'development' : 'production'),
     },
     __MODIFICATION_DATE__: JSON.stringify(currentDate),
     __VERSION__: JSON.stringify(lastCommitHash),
   }),
 
-  env === 'dev' && new HotModuleReplacementPlugin(),
+  isDev && new webpack.HotModuleReplacementPlugin(),
 
-  new NamedChunksPlugin(chunkToName),
+  new webpack.NamedChunksPlugin(chunkToName),
 
   new HtmlWebpackPlugin({
     filename: 'index.html',
@@ -68,6 +45,5 @@ module.exports = env => [
     },
   }),
 
-
-  env === 'analyze' && new BundleAnalyzerPlugin(),
-].filter(item => item)
+  process.env.npm_config_report && new BundleAnalyzerPlugin(),
+])

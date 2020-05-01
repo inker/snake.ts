@@ -1,19 +1,24 @@
 const { createLodashTransformer } = require('typescript-plugin-lodash')
+const { compact } = require('lodash')
 
-const tsOptions = env => env === 'dev' ? {
+const tsOptions = (isDev) => isDev ? {
   useCache: true,
 } : {
-  getCustomTransformers: () => ({ before: [createLodashTransformer()] }),
+  getCustomTransformers: () => ({
+    before: [
+      createLodashTransformer(),
+    ],
+  }),
+  ignoreDiagnostics: [],
 }
 
-module.exports = env => [
+module.exports = (isDev) => compact([
   {
     test: /\.tsx?$/,
     use: {
       loader: 'awesome-typescript-loader',
-      options: tsOptions(env),
+      options: tsOptions(isDev),
     },
     exclude: /node_modules/,
   },
-  // other loaders
-].filter(item => item)
+])
