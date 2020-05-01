@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([["version"],{163:function(e,n,t){"use strict";const o=document.createElement("meta");o.name="modification_date",o.content="Fri, 01 May 2020 21:50:19 GMT",document.head.appendChild(o)}}]);
