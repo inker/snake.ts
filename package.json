@@ -50,8 +50,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
     "html-webpack-plugin": "^4.3.0",
-    "tslint": "^6.1.2",
-    "tslint-react": "^5.0.0",
     "typescript": "^3.6.3",
     "typescript-plugin-lodash": "^0.1.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
