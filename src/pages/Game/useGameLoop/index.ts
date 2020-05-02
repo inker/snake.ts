@@ -11,6 +11,7 @@ export default (run: boolean, interval: number, onLoopUpdate: (numFrames: number
   gameLoop.interval = interval
   gameLoop.onUpdate = onLoopUpdate
 
+  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
       gameLoop.stop()

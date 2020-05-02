@@ -25,14 +25,12 @@ interface Props {
 
 const GameOver = ({
   score,
-}: Props) => {
-  return (
-    <Root>
-      <div>GAME OVER</div>
-      <div>Your score: {score}</div>
-      <SmallText>To restart the game, press Esc or click 'Restart'</SmallText>
-    </Root>
-  )
-}
+}: Props) => (
+  <Root>
+    <div>GAME OVER</div>
+    <div>Your score: {score}</div>
+    <SmallText>To restart the game, press Esc or click &apos;Restart&apos;</SmallText>
+  </Root>
+)
 
 export default memo(GameOver)

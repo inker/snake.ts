@@ -25,23 +25,21 @@ interface Props extends Omit<InputProps, 'ref' | 'defaultValue'> {
 const Slider = ({
   value,
   defaultValue,
-  ...props
-}: Props) => {
-  return (
-    <Root>
-      <Label disabled={props.disabled}>
-        {capitalize(props['data-variable'])}
-        <Range
-          value={value}
-          defaultValue={defaultValue === undefined ? undefined : defaultValue.toString()}
-          {...props}
-        />
-      </Label>
-      <Value disabled={props.disabled}>
-        {value}
-      </Value>
-    </Root>
-  )
-}
+  ...otherProps
+}: Props) => (
+  <Root>
+    <Label disabled={otherProps.disabled}>
+      {capitalize(otherProps['data-variable'])}
+      <Range
+        value={value}
+        defaultValue={defaultValue === undefined ? undefined : defaultValue.toString()}
+        {...otherProps}
+      />
+    </Label>
+    <Value disabled={otherProps.disabled}>
+      {value}
+    </Value>
+  </Root>
+)
 
 export default memo(Slider)

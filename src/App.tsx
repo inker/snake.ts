@@ -6,8 +6,6 @@ import React, {
 import styled from 'styled-components'
 import { uniqueId } from 'lodash'
 
-import config from './config.json'
-
 import Game from 'pages/Game'
 import NavBar from 'components/NavBar'
 
@@ -15,6 +13,8 @@ import useEvent from 'utils/hooks/useEvent'
 import useKeyDownUp from 'utils/hooks/useKeyDownUp'
 import useDictSet from 'utils/hooks/useDictSet'
 import useLocalStorage from 'utils/hooks/useLocalStorage'
+
+import config from './config.json'
 
 // @ts-ignore
 import(/* webpackChunkName: "version" */ './version')

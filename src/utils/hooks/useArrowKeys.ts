@@ -4,8 +4,8 @@ import {
 } from 'react'
 
 import Direction from 'utils/Direction'
-
 import directionByKeyCode from 'utils/directionByKeyCode'
+
 import useEvent from './useEvent'
 
 export default () => {

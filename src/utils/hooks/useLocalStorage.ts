@@ -6,7 +6,7 @@ import {
 type StateSet<T> = (state: T) => T
 
 export default <T>(key: string, initialValue: T) => {
-    // State to store our value
+  // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {

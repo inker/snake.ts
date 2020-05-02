@@ -37,5 +37,4 @@ export default class GameLoop {
     }
     window.requestAnimationFrame(this.step)
   }
-
 }

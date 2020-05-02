@@ -19,14 +19,12 @@ const SmallText = styled.div`
   font-size: 20px;
 `
 
-const Start = () => {
-  return (
-    <Root>
-      <SmallText>
-        To start the game, press any key or click 'Start'
-      </SmallText>
-    </Root>
-  )
-}
+const Start = () => (
+  <Root>
+    <SmallText>
+      To start the game, press any key or click &apos;Start&apos;
+    </SmallText>
+  </Root>
+)
 
 export default Start
