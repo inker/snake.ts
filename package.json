@@ -28,7 +28,7 @@
   "dependencies": {
     "delay.js": "^2.0.0",
     "fast-delete": "^1.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
     "styled-components": "^5.1.0",
