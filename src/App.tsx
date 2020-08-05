@@ -12,7 +12,7 @@ import NavBar from 'components/NavBar'
 import useEvent from 'utils/hooks/useEvent'
 import useKeyDownUp from 'utils/hooks/useKeyDownUp'
 import useDictSet from 'utils/hooks/useDictSet'
-import useLocalStorage from 'utils/hooks/useLocalStorage'
+import useSettings from 'utils/hooks/useSettings'
 
 import config from './config.json'
 
@@ -23,12 +23,6 @@ const Root = styled.div`
   display: flex;
   font-family: Tahoma, Arial, sans-serif;
 `
-
-const defaultSettings = {
-  width: config.size.default.width,
-  height: config.size.default.height,
-  speed: config.speed.default,
-}
 
 interface State {
   isRunning: boolean,
@@ -43,7 +37,7 @@ const App = () => {
     isStart: true,
   })
 
-  const [settings, setSettings, resetSettings] = useLocalStorage('settings', defaultSettings)
+  const [settings, setSettings, resetSettings] = useSettings()
 
   const setSetting = useDictSet(setSettings)
 
