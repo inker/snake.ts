@@ -55,7 +55,7 @@ module.exports = (env) => {
     plugins: plugins(isDev),
     devServer: {
       contentBase: distDir,
-      port: 9080,
+      port: 9081,
       compress: !isDev,
       historyApiFallback: {
         rewrites: [
