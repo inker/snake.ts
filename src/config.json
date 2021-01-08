@@ -1,12 +1,12 @@
 {
   "size": {
     "default": {
-      "width": 50,
-      "height": 50
-    },
-    "min": {
       "width": 20,
       "height": 20
+    },
+    "min": {
+      "width": 10,
+      "height": 10
     },
     "max": {
       "width": 100,
