@@ -2,11 +2,12 @@ const TerserWebpackPlugin = require('terser-webpack-plugin')
 
 module.exports = (isDev) => ({
   runtimeChunk: true,
+  moduleIds: 'deterministic',
+  chunkIds: 'deterministic',
   splitChunks: {
     chunks: 'all',
     cacheGroups: {
-      // vendor: {
-      vendors: {
+      defaultVendors: {
         test: /node_modules/,
         // chunks: 'initial',
         name: 'vendor',
@@ -14,7 +15,7 @@ module.exports = (isDev) => ({
         enforce: true,
       },
       react: {
-        test: /[\\/]react(-dom)?[\\/]/,
+        test: /[/\\]react(-dom)?[/\\]/,
         chunks: 'initial',
         name: 'react',
         enforce: true,
