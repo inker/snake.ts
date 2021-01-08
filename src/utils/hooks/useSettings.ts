@@ -1,4 +1,4 @@
-import makeReducerHookPersist from 'utils/makeReducerHookPersist'
+import makeStoreHookPersist from 'utils/makeStoreHookPersist'
 
 import config from '../../config.json'
 
@@ -8,4 +8,4 @@ const defaultSettings = {
   speed: config.speed.default,
 }
 
-export default makeReducerHookPersist('store:settings', defaultSettings)
+export default makeStoreHookPersist('store:settings', defaultSettings)
