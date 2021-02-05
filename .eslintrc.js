@@ -1,7 +1,7 @@
 module.exports = {
   extends: [
     'eslint-config-airbnb',
-    '@inker/eslint-config',
+    '@inker/eslint-config-typescript',
     // 'plugin:import/errors',
     // 'plugin:import/warnings',
   ],
@@ -12,6 +12,10 @@ module.exports = {
   ],
 
   parser: '@typescript-eslint/parser',
+
+  parserOptions: {
+    project: './tsconfig.json',
+  },
 
   settings: {
     // Append 'ts' extensions to Airbnb 'import/resolver' setting
@@ -30,7 +34,7 @@ module.exports = {
           '.json',
         ],
         webpack: {
-          'config': 'webpack/webpack.config.js',
+          config: 'webpack/webpack.config.js',
         },
       },
     },
@@ -50,6 +54,7 @@ module.exports = {
     }],
 
     'react/prop-types': 0,
+    'react/react-in-jsx-scope': 0,
     'react/require-default-props': 0,
     'react/jsx-one-expression-per-line': 0,
     'react/jsx-props-no-spreading': 0,
@@ -60,10 +65,11 @@ module.exports = {
       ],
     }],
 
+    '@typescript-eslint/no-extra-parens': 0,
     '@typescript-eslint/no-unused-vars': [2, {
-      'vars': 'all',
-      'args': 'after-used',
-      'ignoreRestSiblings': false,
+      vars: 'all',
+      args: 'after-used',
+      ignoreRestSiblings: false,
     }],
   },
 

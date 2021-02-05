@@ -1,7 +1,5 @@
-/* eslint-disable eslint-comments/no-use */
-
 const meta = document.createElement('meta')
 meta.name = 'modification-date'
 // @ts-ignore
-meta.content = __MODIFICATION_DATE__ // eslint-disable-line no-undef
+meta.content = __MODIFICATION_DATE__
 document.head.appendChild(meta)

@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import styled from 'styled-components'
 
 const Root = styled.div`
@@ -20,7 +20,7 @@ const SmallText = styled.div`
 `
 
 interface Props {
-  score: number
+  score: number,
 }
 
 const GameOver = ({

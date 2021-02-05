@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useEffect,
   memo,
@@ -41,6 +41,11 @@ function makeFood(boardWidth: number, boardHeight: number, snake: Point[]) {
     : food
 }
 
+interface State {
+  snake: Point[],
+  food: Point | null,
+}
+
 function getInitialState(
   boardWith: number,
   boardHeight: number,
@@ -67,11 +72,6 @@ interface Props {
   initialLength: number,
   onScoreChange: (score: number) => void,
   onGameOver: () => void,
-}
-
-interface State {
-  snake: Point[],
-  food: Point | null,
 }
 
 const Game = ({
