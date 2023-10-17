@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksnake=self.webpackChunksnake||[]).push([[872],{5213:()=>{const e=document.createElement("meta");e.name="modification-date",e.content="Tue, 17 Oct 2023 11:59:46 GMT",document.head.appendChild(e)}}]);
